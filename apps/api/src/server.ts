@@ -3,6 +3,7 @@ import { config } from './config';
 import { connectDB, disconnectDB } from './config/database';
 import { connectRedis, redis } from './config/redis';
 import { logger } from './utils/logger';
+import { performDatabaseBackup } from './utils/backup';
 
 async function bootstrap() {
   try {
@@ -21,6 +22,11 @@ async function bootstrap() {
 ╚═══════════════════════════════════════════╝
       `);
     });
+
+    // ─── AUTOMATED BACKUPS ────────────────────────────────────────────────────
+    // Run backup on startup and then every 24 hours
+    performDatabaseBackup();
+    setInterval(performDatabaseBackup, 24 * 60 * 60 * 1000);
 
     // ─── GRACEFUL SHUTDOWN ────────────────────────────────────────────────────
     const shutdown = async (signal: string) => {

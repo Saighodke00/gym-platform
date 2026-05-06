@@ -32,6 +32,7 @@ const assignPlanSchema = z.object({
   coupon_code: z.string().optional(),
   notes: z.string().optional(),
   amount_paid: z.number().positive(),
+  payment_method: z.string().optional().default('cash'),
 });
 
 // GET /api/v1/plans
@@ -103,7 +104,7 @@ router.patch('/:id/toggle-active', authorize('admin'), async (req, res) => {
 
 // POST /api/v1/plans/assign
 router.post('/assign', authorize('admin', 'trainer'), validate(assignPlanSchema), async (req, res) => {
-  const { member_id, plan_id, start_date, discount_applied, coupon_code, notes, amount_paid } = req.body;
+  const { member_id, plan_id, start_date, discount_applied, coupon_code, notes, amount_paid, payment_method } = req.body;
 
   const [member, plan] = await Promise.all([
     prisma.member.findFirst({ 
@@ -140,6 +141,19 @@ router.post('/assign', authorize('admin', 'trainer'), validate(assignPlanSchema)
         notes,
       },
       include: { plan: true },
+    });
+
+    // Create corresponding payment receipt to fix ledger bug
+    await tx.payment.create({
+      data: {
+        member_id,
+        member_plan_id: mp.id,
+        amount: amount_paid,
+        method: payment_method || 'cash',
+        status: 'completed',
+        notes: notes || 'Initial plan assignment',
+        paid_at: new Date(),
+      }
     });
 
     await tx.member.update({
