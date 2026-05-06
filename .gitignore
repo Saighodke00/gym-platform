@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+*.log
+logs/
+.DS_Store
+*.tsbuildinfo
+prisma/*.db
+
+*.db
+*.db-journal
+.env*
+
+.wwebjs_auth
+apps/api/.wwebjs_auth
+apps/api/.wwebjs_cache

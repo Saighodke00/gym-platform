@@ -1,0 +1,405 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Gym {
+  id                String           @id @default(uuid())
+  name              String
+  address           String?
+  phone             String?
+  email             String?
+  gstin             String?
+  logo_url          String?
+  whatsapp_number   String?
+  absence_threshold Int              @default(7)
+  created_at        DateTime         @default(now())
+  updated_at        DateTime         @updatedAt
+  attendance        Attendance[]
+  audit_logs        AuditLog[]
+  broadcasts        Broadcast[]
+  diet_plans        DietPlan[]
+  exercises         Exercise[]
+  members           Member[]
+  membership_plans  MembershipPlan[]
+  notifications     Notification[]
+  users             User[]
+  workout_plans     WorkoutPlan[]
+
+  @@map("gyms")
+}
+
+model User {
+  id              String          @id @default(uuid())
+  gym_id          String
+  name            String
+  email           String          @unique
+  phone           String?
+  role            String
+  password_hash   String
+  is_active       Boolean         @default(true)
+  last_login_at   DateTime?
+  created_at      DateTime        @default(now())
+  updated_at      DateTime        @updatedAt
+  audit_logs      AuditLog[]
+  diet_plans      DietPlan[]      @relation("DietPlanCreatedBy")
+  member          Member?
+  session_notes   SessionNote[]
+  trainer_members TrainerMember[]
+  gym             Gym             @relation(fields: [gym_id], references: [id])
+  workout_plans   WorkoutPlan[]   @relation("PlanCreatedBy")
+
+  @@map("users")
+}
+
+model Member {
+  id                 String                 @id @default(uuid())
+  gym_id             String
+  user_id            String                 @unique
+  member_code        String                 @unique
+  dob                DateTime?
+  address            String?
+  emergency_contact  String?
+  profile_photo_url  String?
+  government_id_url  String?
+  height_cm          Float?
+  weight_kg          Float?
+  body_fat_pct       Float?
+  medical_conditions String?
+  fitness_goal       String?
+  activity_level     String?
+  dietary_preference String?
+  fitness_experience String?
+  referral_source    String?
+  qr_code_url        String?
+  status             String                 @default("active")
+  joined_at          DateTime               @default(now())
+  updated_at         DateTime               @updatedAt
+  attendance         Attendance[]
+  feedback           Feedback[]
+  documents          MemberDocument[]
+  member_plans       MemberPlan[]
+  workout_sessions   MemberWorkoutSession[]
+  user               User                   @relation(fields: [user_id], references: [id])
+  gym                Gym                    @relation(fields: [gym_id], references: [id])
+  notifications      Notification[]
+  payments           Payment[]
+  progress_logs      ProgressLog[]
+  session_notes      SessionNote[]
+  timeline_events    TimelineEvent[]
+  trainer_relations  TrainerMember[]
+
+  @@map("members")
+}
+
+model TrainerMember {
+  id          String   @id @default(uuid())
+  trainer_id  String
+  member_id   String
+  assigned_at DateTime @default(now())
+  member      Member   @relation(fields: [member_id], references: [id])
+  trainer     User     @relation(fields: [trainer_id], references: [id])
+
+  @@unique([trainer_id, member_id])
+  @@map("trainer_members")
+}
+
+model MemberDocument {
+  id          String   @id @default(uuid())
+  member_id   String
+  type        String
+  file_url    String
+  encrypted   Boolean  @default(false)
+  uploaded_at DateTime @default(now())
+  member      Member   @relation(fields: [member_id], references: [id])
+
+  @@map("member_documents")
+}
+
+model MembershipPlan {
+  id                  String       @id @default(uuid())
+  gym_id              String
+  name                String
+  description         String?
+  duration_days       Int
+  price               Float
+  gst_rate            Float        @default(18)
+  gst_inclusive       Boolean      @default(false)
+  features            String       @default("[]")
+  max_members         Int?
+  freeze_days_allowed Int          @default(0)
+  is_active           Boolean      @default(true)
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @updatedAt
+  member_plans        MemberPlan[]
+  gym                 Gym          @relation(fields: [gym_id], references: [id])
+
+  @@map("membership_plans")
+}
+
+model MemberPlan {
+  id               String         @id @default(uuid())
+  member_id        String
+  plan_id          String
+  start_date       DateTime
+  end_date         DateTime
+  status           String         @default("active")
+  amount_paid      Float
+  discount_applied Float          @default(0)
+  coupon_code      String?
+  notes            String?
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  plan             MembershipPlan @relation(fields: [plan_id], references: [id])
+  member           Member         @relation(fields: [member_id], references: [id])
+  payments         Payment[]
+
+  @@map("member_plans")
+}
+
+model Attendance {
+  id            String    @id @default(uuid())
+  member_id     String
+  gym_id        String
+  checked_in_at DateTime  @default(now())
+  check_out_at  DateTime?
+  method        String    @default("qr")
+  notes         String?
+  gym           Gym       @relation(fields: [gym_id], references: [id])
+  member        Member    @relation(fields: [member_id], references: [id])
+
+  @@map("attendance")
+}
+
+model WorkoutPlan {
+  id             String                 @id @default(uuid())
+  gym_id         String
+  name           String
+  level          String
+  goal           String
+  duration_weeks Int
+  days_per_week  Int
+  description    String?
+  is_template    Boolean                @default(false)
+  version        Int                    @default(1)
+  created_by     String
+  created_at     DateTime               @default(now())
+  updated_at     DateTime               @updatedAt
+  sessions       MemberWorkoutSession[]
+  days           WorkoutDay[]
+  creator        User                   @relation("PlanCreatedBy", fields: [created_by], references: [id])
+  gym            Gym                    @relation(fields: [gym_id], references: [id])
+
+  @@map("workout_plans")
+}
+
+model Exercise {
+  id                      String   @id @default(uuid())
+  gym_id                  String
+  name                    String
+  muscle_groups           String
+  equipment               String
+  default_sets            Int      @default(3)
+  default_reps            Int      @default(12)
+  rest_seconds            Int      @default(60)
+  tempo                   String?
+  video_url               String?
+  difficulty              Int      @default(3)
+  alternative_exercise_id String?
+  is_active               Boolean  @default(true)
+  created_at              DateTime @default(now())
+  gym                     Gym      @relation(fields: [gym_id], references: [id])
+
+  @@map("exercises")
+}
+
+model WorkoutDay {
+  id           String      @id @default(uuid())
+  plan_id      String
+  week_num     Int
+  day_num      Int
+  muscle_focus String
+  exercises    String      @default("[]")
+  plan         WorkoutPlan @relation(fields: [plan_id], references: [id], onDelete: Cascade)
+
+  @@map("workout_days")
+}
+
+model MemberWorkoutSession {
+  id               String      @id @default(uuid())
+  member_id        String
+  plan_id          String
+  session_date     DateTime
+  exercises_logged String      @default("[]")
+  effort_rating    String?
+  completion_pct   Float       @default(0)
+  notes            String?
+  created_at       DateTime    @default(now())
+  plan             WorkoutPlan @relation(fields: [plan_id], references: [id])
+  member           Member      @relation(fields: [member_id], references: [id])
+
+  @@map("member_workout_sessions")
+}
+
+model SessionNote {
+  id           String   @id @default(uuid())
+  member_id    String
+  trainer_id   String
+  session_date DateTime
+  note         String
+  created_at   DateTime @default(now())
+  trainer      User     @relation(fields: [trainer_id], references: [id])
+  member       Member   @relation(fields: [member_id], references: [id])
+
+  @@map("session_notes")
+}
+
+model Payment {
+  id                  String      @id @default(uuid())
+  member_id           String
+  member_plan_id      String?
+  amount              Float
+  gst_amount          Float       @default(0)
+  method              String
+  status              String      @default("pending")
+  razorpay_order_id   String?
+  razorpay_payment_id String?
+  invoice_url         String?
+  invoice_number      String?     @unique
+  notes               String?
+  paid_at             DateTime?
+  created_at          DateTime    @default(now())
+  updated_at          DateTime    @updatedAt
+  member_plan         MemberPlan? @relation(fields: [member_plan_id], references: [id])
+  member              Member      @relation(fields: [member_id], references: [id])
+
+  @@map("payments")
+}
+
+model DietPlan {
+  id              String   @id @default(uuid())
+  gym_id          String
+  name            String
+  goal            String
+  diet_type       String
+  calories_target Int
+  protein_g       Float
+  carbs_g         Float
+  fat_g           Float
+  duration_weeks  Int      @default(4)
+  meals           String   @default("{}")
+  trainer_notes   String?
+  is_template     Boolean  @default(false)
+  created_by      String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  creator         User     @relation("DietPlanCreatedBy", fields: [created_by], references: [id])
+  gym             Gym      @relation(fields: [gym_id], references: [id])
+
+  @@map("diet_plans")
+}
+
+model ProgressLog {
+  id           String   @id @default(uuid())
+  member_id    String
+  logged_at    DateTime @default(now())
+  weight_kg    Float?
+  body_fat_pct Float?
+  bmi          Float?
+  measurements String   @default("{}")
+  photos       String   @default("{}")
+  notes        String?
+  member       Member   @relation(fields: [member_id], references: [id])
+
+  @@map("progress_logs")
+}
+
+model Feedback {
+  id               String    @id @default(uuid())
+  member_id        String
+  trainer_id       String?
+  gym_rating       Int       @default(0)
+  trainer_rating   Int       @default(0)
+  facility_rating  Int       @default(0)
+  plan_rating      Int       @default(0)
+  comment          String?
+  suggestion       String?
+  is_flagged       Boolean   @default(false)
+  admin_reply      String?
+  admin_replied_at DateTime?
+  created_at       DateTime  @default(now())
+  member           Member    @relation(fields: [member_id], references: [id])
+
+  @@map("feedback")
+}
+
+model Notification {
+  id            String    @id @default(uuid())
+  gym_id        String
+  member_id     String
+  type          String
+  channel       String
+  message       String
+  scheduled_at  DateTime?
+  sent_at       DateTime?
+  status        String    @default("scheduled")
+  error_message String?
+  created_at    DateTime  @default(now())
+  member        Member    @relation(fields: [member_id], references: [id])
+  gym           Gym       @relation(fields: [gym_id], references: [id])
+
+  @@map("notifications")
+}
+
+model Broadcast {
+  id              String    @id @default(uuid())
+  gym_id          String
+  title           String
+  message         String
+  target_type     String
+  target_filter   String    @default("{}")
+  scheduled_at    DateTime?
+  status          String    @default("draft")
+  sent_count      Int       @default(0)
+  delivered_count Int       @default(0)
+  read_count      Int       @default(0)
+  failed_count    Int       @default(0)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  gym             Gym       @relation(fields: [gym_id], references: [id])
+
+  @@map("broadcasts")
+}
+
+model TimelineEvent {
+  id          String   @id @default(uuid())
+  member_id   String
+  event_type  String
+  description String
+  metadata    String   @default("{}")
+  created_at  DateTime @default(now())
+  member      Member   @relation(fields: [member_id], references: [id])
+
+  @@map("timeline_events")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  gym_id      String
+  user_id     String
+  action      String
+  entity_type String
+  entity_id   String?
+  before_data String?
+  after_data  String?
+  ip_address  String?
+  created_at  DateTime @default(now())
+  user        User     @relation(fields: [user_id], references: [id])
+  gym         Gym      @relation(fields: [gym_id], references: [id])
+
+  @@map("audit_logs")
+}
