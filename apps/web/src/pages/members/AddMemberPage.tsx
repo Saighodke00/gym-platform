@@ -330,7 +330,6 @@ export default function AddMemberPage() {
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-primary-700">₹{plan.price.toLocaleString('en-IN')}</p>
-                  <p className="text-xs text-slate-400">+{plan.gst_rate}% GST</p>
                 </div>
               </label>
             ))}
@@ -390,6 +389,7 @@ export default function AddMemberPage() {
                     <option value="cash">Cash</option>
                     <option value="upi">UPI</option>
                     <option value="card">Card</option>
+                    <option value="bank_transfer">Bank Transfer</option>
                   </select>
                 </div>
               </div>

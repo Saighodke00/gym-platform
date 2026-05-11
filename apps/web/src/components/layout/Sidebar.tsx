@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Users, CreditCard, CalendarCheck,
   Dumbbell, BarChart3, Settings, LogOut, ChevronLeft,
-  ChevronRight, Zap, IndianRupee,
+  ChevronRight, Zap, IndianRupee, MessageSquare, ClipboardList, Wallet
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import api from '@/lib/api'
@@ -16,8 +16,10 @@ const navItems = [
   { to: '/plans',       icon: CreditCard,      label: 'Membership Plans' },
   { to: '/payments',    icon: IndianRupee,     label: 'Payments & Ledger' },
   { to: '/attendance',  icon: CalendarCheck,   label: 'Attendance' },
+  { to: '/broadcast',   icon: MessageSquare,   label: 'Broadcast' },
+
   { to: '/workouts',    icon: Dumbbell,        label: 'Workouts' },
-  { to: '/analytics',   icon: BarChart3,       label: 'Analytics', soon: true },
+  { to: '/analytics',   icon: BarChart3,       label: 'Analytics' },
   { to: '/settings',    icon: Settings,        label: 'Settings' },
 ]
 

@@ -1,0 +1,17 @@
+{
+  "short_name": "GDK Gym",
+  "name": "GDK Gym Management Platform",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1A56A0",
+  "background_color": "#ffffff",
+  "orientation": "portrait"
+}

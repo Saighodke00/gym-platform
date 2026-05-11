@@ -1,8 +1,30 @@
 import axios from 'axios'
 import { useAuthStore } from '@/store/authStore'
 
+const getBaseURL = () => {
+  // If we are running on a mobile device (Capacitor)
+  const isNative = window.location.protocol === 'capacitor:'
+  const isMobileView = window.innerWidth < 768
+
+  if (isNative || (window.location.hostname === 'localhost' && isMobileView)) {
+    // Check if we are in an Android Emulator
+    const ua = navigator.userAgent.toLowerCase()
+    const isEmulator = ua.includes('android') && (ua.includes('google') || ua.includes('sdk') || ua.includes('emulator'))
+    
+    if (isEmulator) {
+      return 'http://10.0.2.2:4000/api/v1'
+    }
+    
+    // Default to local IP for physical devices (Update this to your PC's IP if needed)
+    return 'http://192.168.0.102:4000/api/v1'
+  }
+
+  // Otherwise use the relative path (works for web and dev proxy)
+  return '/api/v1'
+}
+
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: getBaseURL(),
   headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
 })
@@ -48,7 +70,7 @@ api.interceptors.response.use(
       }
 
       try {
-        const { data } = await axios.post('/api/v1/auth/refresh', { refreshToken })
+        const { data } = await api.post('/auth/refresh', { refreshToken })
         useAuthStore.getState().setTokens(data.data.accessToken, data.data.refreshToken)
         processQueue(null, data.data.accessToken)
         originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`

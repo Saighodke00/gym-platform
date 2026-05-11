@@ -14,6 +14,7 @@ function MemberCard({ member }: { member: any }) {
   const status = member.status
   const activePlan = member.member_plans?.[0]
   const lastCheckin = member.attendance?.[0]
+  const dues = activePlan ? (activePlan.plan?.price || 0) - (activePlan.discount_applied || 0) - (activePlan.amount_paid || 0) : 0;
 
   return (
     <Link
@@ -34,9 +35,16 @@ function MemberCard({ member }: { member: any }) {
             <p className="text-xs text-slate-400 mt-0.5">{member.member_code}</p>
           </div>
         </div>
-        <span className={cn('badge', getMemberStatusColor(status))}>
-          {getMemberStatusLabel(status)}
-        </span>
+        <div className="flex flex-col items-end gap-1">
+          <span className={cn('badge', getMemberStatusColor(status))}>
+            {getMemberStatusLabel(status)}
+          </span>
+          {dues > 0 && (
+            <span className="badge bg-danger/10 text-danger border-danger/20 font-bold">
+              Due: ₹{dues.toLocaleString('en-IN')}
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="space-y-1.5 text-xs text-slate-500">
@@ -69,6 +77,7 @@ function MemberTableRow({ member }: { member: any }) {
   const status = member.status
   const activePlan = member.member_plans?.[0]
   const lastCheckin = member.attendance?.[0]
+  const dues = activePlan ? (activePlan.plan?.price || 0) - (activePlan.discount_applied || 0) - (activePlan.amount_paid || 0) : 0;
 
   return (
     <tr>
@@ -87,7 +96,10 @@ function MemberTableRow({ member }: { member: any }) {
       <td>
         <span className={cn('badge', getMemberStatusColor(status))}>{getMemberStatusLabel(status)}</span>
       </td>
-      <td className="text-sm text-slate-600">{activePlan?.plan?.name ?? '—'}</td>
+      <td className="text-sm text-slate-600">
+        <div>{activePlan?.plan?.name ?? '—'}</div>
+        {dues > 0 && <div className="text-xs font-bold text-danger mt-0.5">Due: ₹{dues.toLocaleString('en-IN')}</div>}
+      </td>
       <td className="text-sm text-slate-600">{activePlan ? formatDate(activePlan.end_date) : '—'}</td>
       <td className="text-sm text-slate-500">{lastCheckin ? formatDate(lastCheckin.checked_in_at) : 'Never'}</td>
       <td>

@@ -1,6 +1,8 @@
 import { NavLink } from 'react-router-dom'
 import { LayoutDashboard, Users, CreditCard, CalendarCheck, Dumbbell } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { triggerHaptic } from '@/lib/mobile'
+import { ImpactStyle } from '@capacitor/haptics'
 
 const mobileNav = [
   { to: '/dashboard',  icon: LayoutDashboard, label: 'Home' },
@@ -18,6 +20,7 @@ export default function MobileNav() {
           <NavLink
             key={to}
             to={to}
+            onClick={() => triggerHaptic(ImpactStyle.Light)}
             className={({ isActive }) =>
               cn(
                 'flex-1 flex flex-col items-center gap-1 py-2 text-[10px] font-medium transition-colors',

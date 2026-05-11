@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { CheckCircle2, XCircle, Loader2, Zap, Smartphone, User } from 'lucide-react'
 import axios from 'axios'
 import { cn } from '@/lib/utils'
+import { triggerHaptic, scheduleLocalNotification } from '@/lib/mobile'
+import { ImpactStyle } from '@capacitor/haptics'
 
 type CheckinStatus = 'idle' | 'loading' | 'success' | 'error' | 'expired'
 
@@ -18,16 +20,28 @@ export default function MemberCheckin() {
     try {
       // Stripping potential GDK: prefix
       const cleanCode = code.replace('GDK:', '').trim()
-      const res = await axios.post('/api/v1/attendance/public-checkin', { member_code: cleanCode })
-      setResult(res.data.data)
+      const res = await axios.post('/api/v1/attendance/public-checkin', { 
+        member_code: cleanCode 
+      }, {
+        headers: { 'ngrok-skip-browser-warning': 'true' }
+      })
+      const data = res.data.data
+      setResult(data)
       
       // Save for next time (One-time login)
       localStorage.setItem('gdk_member_code', cleanCode)
       
-      if (res.data.data.status === 'already_checked_in') {
+      if (data.status === 'already_checked_in') {
         setStatus('success') // Still show success-ish UI but with the warning message
+        triggerHaptic(ImpactStyle.Medium)
       } else {
         setStatus('success')
+        triggerHaptic(ImpactStyle.Heavy)
+        scheduleLocalNotification(
+          'GDK Gym Check-in',
+          `Successfully checked in as ${data.member?.name}!`,
+          0
+        )
       }
     } catch (err: any) {
       const errorStatus = err.response?.data?.data?.status

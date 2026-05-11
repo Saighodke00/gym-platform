@@ -150,7 +150,7 @@ router.post('/assign', authorize('admin', 'trainer'), validate(assignPlanSchema)
         member_plan_id: mp.id,
         amount: amount_paid,
         method: payment_method || 'cash',
-        status: 'completed',
+        status: 'confirmed',
         notes: notes || 'Initial plan assignment',
         paid_at: new Date(),
       }

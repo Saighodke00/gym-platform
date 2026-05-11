@@ -16,6 +16,10 @@ import paymentRoutes from './routes/payments';
 import exerciseRoutes from './routes/exercises';
 import workoutRoutes from './routes/workouts';
 import systemRoutes from './routes/system';
+import { analyticsRouter } from './routes/analytics';
+import enquiryRoutes from './routes/enquiries';
+import expenseRoutes from './routes/expenses';
+import templateRoutes from './routes/templates';
 
 const app = express();
 
@@ -65,6 +69,10 @@ app.use(`${API}/payments`, paymentRoutes);
 app.use(`${API}/exercises`, exerciseRoutes);
 app.use(`${API}/workouts`, workoutRoutes);
 app.use(`${API}/system`, systemRoutes);
+app.use(`${API}/analytics`, analyticsRouter);
+app.use(`${API}/enquiries`, enquiryRoutes);
+app.use(`${API}/expenses`, expenseRoutes);
+app.use(`${API}/templates`, templateRoutes);
 
 // ─── 404 HANDLER ─────────────────────────────────────────────────────────────
 app.use((_req, res) => {

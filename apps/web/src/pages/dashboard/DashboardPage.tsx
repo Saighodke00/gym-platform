@@ -1,19 +1,18 @@
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import {
-  Users, TrendingUp, TrendingDown, CalendarCheck,
-  AlertCircle, ArrowUpRight, Clock, IndianRupee,
-  UserPlus, Activity, Monitor, Search, Bell,
-  ChevronRight, MoreVertical,
+  Users, TrendingUp, CalendarCheck,
+  AlertCircle, Clock, IndianRupee,
+  UserPlus, Activity, Monitor,
+  ChevronRight,
 } from 'lucide-react'
 import {
   XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Area, AreaChart,
-  PieChart, Pie, Cell, BarChart, Bar,
+  PieChart, Pie, Cell,
 } from 'recharts'
 import api from '@/lib/api'
-import { formatCurrency, daysUntil, getMemberStatusColor, cn, formatDate, formatDateTime } from '@/lib/utils'
+import { formatCurrency, cn, formatDate } from '@/lib/utils'
 import { Link } from 'react-router-dom'
-import toast from 'react-hot-toast'
 
 const COLORS = ['#1A56A0', '#4A90E2', '#7ED321', '#F5A623', '#D0021B', '#BD10E0']
 
@@ -60,10 +59,10 @@ function MiniStat({ label, value, subtext }: { label: string; value: string; sub
 }
 
 export default function DashboardPage() {
-  const { data: statsData, isLoading: statsLoading } = useQuery({
+  const { data: statsData } = useQuery({
     queryKey: ['dashboard-stats'],
     queryFn: () => api.get('/dashboard/stats').then(r => r.data.data),
-    refetchInterval: 3000, // Fast polling for "Live" feel
+    refetchInterval: 15000, // Reduced polling frequency to improve mobile performance
   })
 
   const { data: revenueChart } = useQuery({
@@ -203,7 +202,7 @@ export default function DashboardPage() {
                     paddingAngle={5}
                     dataKey="value"
                   >
-                    {planDist.map((entry: any, index: number) => (
+                    {planDist.map((_: any, index: number) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>

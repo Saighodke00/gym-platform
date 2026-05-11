@@ -137,21 +137,32 @@ router.get('/stats', async (req, res) => {
       }
     });
 
+    const latestExpenses = await prisma.expense.findMany({
+      where: { gym_id: gymId },
+      orderBy: { expense_date: 'desc' },
+      take: 5
+    });
+
     return sendSuccess(res, {
       summary: {
         revenue_this_month: monthlyRevenue._sum.amount || 0,
-        gst_collected: totalRevenue._sum.gst_amount || 0,
+        total_revenue: totalRevenue._sum.amount || 0,
         outstanding_dues: outstandingDues,
-        forecast: (monthlyRevenue._sum.amount || 0) * 1.2,
+        active_members: activePlans.length,
       },
       methods: {
-        razorpay: methodStats.find(m => m.method === 'razorpay') || { _sum: { amount: 0 }, _count: { id: 0 } },
+        bank: {
+          _sum: { amount: methodStats.filter(m => m.method === 'card' || m.method === 'bank_transfer').reduce((sum, m) => sum + (m._sum.amount || 0), 0) },
+          _count: { id: methodStats.filter(m => m.method === 'card' || m.method === 'bank_transfer').reduce((sum, m) => sum + (m._count.id || 0), 0) }
+        },
         upi: methodStats.find(m => m.method === 'upi') || { _sum: { amount: 0 }, _count: { id: 0 } },
         cash: methodStats.find(m => m.method === 'cash') || { _sum: { amount: 0 }, _count: { id: 0 } },
       },
       trend: trendData,
-      overdue: overdueMembers.slice(0, 5)
+      overdue: overdueMembers.slice(0, 5),
+      latestExpenses: latestExpenses
     });
+
   } catch (error) {
     console.error('[Payments API] Stats Error:', error);
     return sendError(res, ErrorCodes.INTERNAL_ERROR, 'Failed to calculate statistics');

@@ -94,7 +94,7 @@ router.get('/', validate(querySchema, 'query'), async (req, res) => {
         user: { select: { id: true, name: true, email: true, phone: true } },
         member_plans: {
           where: { status: 'active' },
-          include: { plan: { select: { name: true, duration_days: true } } },
+          include: { plan: { select: { name: true, duration_days: true, price: true } } },
           orderBy: { created_at: 'desc' },
           take: 1,
         },

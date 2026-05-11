@@ -16,7 +16,9 @@
     "dist": "npm run dist --workspace=apps/desktop",
     "db:migrate": "npm run db:migrate --workspace=apps/api",
     "db:seed": "npm run db:seed --workspace=apps/api",
-    "db:studio": "npm run db:studio --workspace=apps/api"
+    "db:studio": "npm run db:studio --workspace=apps/api",
+    "mobile:sync": "npm run mobile:sync --workspace=apps/web",
+    "mobile:open": "npm run mobile:open --workspace=apps/web"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

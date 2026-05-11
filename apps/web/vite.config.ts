@@ -18,9 +18,7 @@ export default defineConfig({
       '.ngrok.io',           // Ngrok legacy
       'all',                 // Allow all other tunnel hosts
     ],
-    hmr: {
-      clientPort: 443,
-    },
+    hmr: true,
     proxy: {
       '/api': {
         target: 'http://localhost:4000',

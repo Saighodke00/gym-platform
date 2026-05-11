@@ -14,3 +14,8 @@ prisma/*.db
 .wwebjs_auth
 apps/api/.wwebjs_auth
 apps/api/.wwebjs_cache
+
+# Temporary / Build Files
+scratch/
+build_output.txt
+.vscode/

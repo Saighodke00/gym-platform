@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { ChevronLeft, QrCode, CheckCircle2, XCircle, AlertCircle, Loader2 } from 'lucide-react'
 import api from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { triggerHaptic, scheduleLocalNotification } from '@/lib/mobile'
+import { ImpactStyle } from '@capacitor/haptics'
 
 type ScanResult = {
   status: 'success' | 'expired' | 'already_checked_in' | 'error'
@@ -44,7 +46,20 @@ export default function QrScannerPage() {
       // Strip GDK: prefix if present
       const cleanCode = code.replace('GDK:', '').trim()
       const res = await api.post('/attendance/qr-checkin', { member_code: cleanCode })
-      setResult(res.data.data)
+      const data = res.data.data
+      setResult(data)
+
+      // Trigger Mobile Feedback
+      if (data.status === 'success' || data.status === 'already_checked_in') {
+        triggerHaptic(ImpactStyle.Heavy)
+        scheduleLocalNotification(
+          'Check-in Successful',
+          `Welcome back, ${data.member?.name}!`,
+          0
+        )
+      } else if (data.status === 'expired') {
+        triggerHaptic(ImpactStyle.Medium)
+      }
     } catch (err: any) {
       setResult({
         status: 'error',

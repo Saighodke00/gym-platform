@@ -52,4 +52,43 @@ router.post('/send-expiry-reminders', async (req, res) => {
   });
 });
 
+// POST /api/v1/notifications/bulk
+router.post('/bulk', async (req, res) => {
+  const { memberIds, message, channel = 'email', subject = 'GDK Gym Update' } = req.body;
+
+  if (!memberIds || !Array.isArray(memberIds) || memberIds.length === 0) {
+    return res.status(400).json({ success: false, message: 'No members selected' });
+  }
+
+  const members = await prisma.member.findMany({
+    where: {
+      id: { in: memberIds },
+      gym_id: req.user!.gymId,
+    },
+    include: { user: { select: { name: true, email: true } } },
+  });
+
+  let sentCount = 0;
+  for (const member of members) {
+    try {
+      const result = await sendNotification({
+        email: member.user.email,
+        subject: subject,
+        message: message.replace('{{name}}', member.user.name),
+        channel: channel
+      });
+      if (result.email || result.telegram) sentCount++;
+    } catch (e) {
+      console.error(`Failed to send bulk message to ${member.user.name}:`, e);
+    }
+  }
+
+  return sendSuccess(res, {
+    message: `Bulk messages sent successfully.`,
+    sent_count: sentCount,
+    total_count: members.length,
+  });
+});
+
+
 export default router;

@@ -1,13 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { 
-  IndianRupee, Download, Plus, Search, Filter, 
+  IndianRupee, Download, Plus,
   TrendingUp, AlertCircle, FileText, Send,
-  CreditCard, Smartphone, Wallet, ChevronRight, Share2,
-  CheckCircle2, Loader2, XCircle
+  CreditCard, Smartphone, Wallet, Share2,
+  CheckCircle2, Loader2
 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import api from '@/lib/api'
-import { formatCurrency, formatDate, cn } from '@/lib/utils'
+import { formatCurrency, cn } from '@/lib/utils'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 
@@ -66,7 +66,7 @@ export default function PaymentsPage() {
     )
   }
 
-  const summary = stats?.summary || { revenue_this_month: 0, gst_collected: 0, outstanding_dues: 0, forecast: 0 }
+  const summary = stats?.summary || { revenue_this_month: 0, total_revenue: 0, outstanding_dues: 0, active_members: 0 }
   const methods = stats?.methods || {}
   const trend = stats?.trend || []
   const overdue = stats?.overdue || []
@@ -103,11 +103,11 @@ export default function PaymentsPage() {
 
         <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-40">
           <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-            <FileText className="w-5 h-5 text-emerald-500" />
+            <IndianRupee className="w-5 h-5 text-emerald-500" />
           </div>
           <div>
-            <h2 className="text-3xl font-display font-bold text-slate-900">{formatCurrency(summary.gst_collected)}</h2>
-            <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">GST Collected</p>
+            <h2 className="text-3xl font-display font-bold text-slate-900">{formatCurrency(summary.total_revenue)}</h2>
+            <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Total Revenue</p>
           </div>
         </div>
 
@@ -122,12 +122,12 @@ export default function PaymentsPage() {
         </div>
 
         <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between h-40">
-          <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
-            <TrendingUp className="w-5 h-5 text-orange-500" />
+          <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+            <TrendingUp className="w-5 h-5 text-indigo-500" />
           </div>
           <div>
-            <h2 className="text-3xl font-display font-bold text-slate-900">{formatCurrency(summary.forecast)}</h2>
-            <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Next 30d Forecast</p>
+            <h2 className="text-3xl font-display font-bold text-slate-900">{summary.active_members}</h2>
+            <p className="text-xs text-slate-400 mt-1 uppercase tracking-wider font-semibold">Active Subscriptions</p>
           </div>
         </div>
       </div>
@@ -171,10 +171,10 @@ export default function PaymentsPage() {
             <div className="w-8 h-8 rounded-lg bg-purple-500 flex items-center justify-center">
               <CreditCard className="w-4 h-4 text-white" />
             </div>
-            <h4 className="font-bold text-purple-900 text-sm">Online (Razorpay)</h4>
+            <h4 className="font-bold text-purple-900 text-sm">Card / Bank Transfer</h4>
           </div>
-          <h3 className="text-2xl font-display font-bold text-purple-900">{formatCurrency(methods?.razorpay?._sum?.amount || 0)}</h3>
-          <p className="text-[11px] text-purple-500 mt-1 font-medium">{methods?.razorpay?._count?.id || 0} transactions processed</p>
+          <h3 className="text-2xl font-display font-bold text-purple-900">{formatCurrency(methods?.bank?._sum?.amount || 0)}</h3>
+          <p className="text-[11px] text-purple-500 mt-1 font-medium">{methods?.bank?._count?.id || 0} transactions processed</p>
         </div>
 
         <div className="bg-[#f0f9ff] border border-blue-100 rounded-2xl p-5">
@@ -203,7 +203,7 @@ export default function PaymentsPage() {
       {/* Transactions Section */}
       <div className="card p-0 overflow-hidden">
         <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-50">
-          <h3 className="text-xl font-display font-bold text-slate-800">Transactions</h3>
+          <h3 className="text-xl font-display font-bold text-slate-800">Income (Transactions)</h3>
           <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-xl">
             {['All', 'Paid', 'Pending', 'Overdue'].map((tab) => (
               <button 
@@ -247,12 +247,12 @@ export default function PaymentsPage() {
                   <div className="flex items-center gap-3 w-48 justify-end">
                     <span className={cn(
                       'text-[10px] font-bold px-2.5 py-1 rounded-lg border uppercase tracking-wider flex items-center gap-1.5',
-                      p.method === 'razorpay' ? 'text-purple-600 bg-purple-50 border-purple-100' :
+                      ['card', 'bank_transfer'].includes(p.method) ? 'text-purple-600 bg-purple-50 border-purple-100' :
                       p.method === 'upi' ? 'text-blue-600 bg-blue-50 border-blue-100' :
                       'text-emerald-600 bg-emerald-50 border-emerald-100'
                     )}>
-                      {p.method === 'razorpay' ? <CreditCard className="w-3 h-3" /> : p.method === 'upi' ? <Smartphone className="w-3 h-3" /> : <Wallet className="w-3 h-3" />}
-                      {p.method}
+                      {['card', 'bank_transfer'].includes(p.method) ? <CreditCard className="w-3 h-3" /> : p.method === 'upi' ? <Smartphone className="w-3 h-3" /> : <Wallet className="w-3 h-3" />}
+                      {p.method.replace('_', ' ')}
                     </span>
                     
                     <button 
@@ -284,6 +284,42 @@ export default function PaymentsPage() {
           )}
         </div>
       </div>
+
+      {/* Expenses Section */}
+      <div className="card p-0 overflow-hidden border-rose-100">
+        <div className="p-6 flex items-center justify-between border-b border-rose-50 bg-rose-50/20">
+          <h3 className="text-xl font-display font-bold text-slate-800">Outflow (Expenses)</h3>
+          <button className="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 rounded-lg transition-colors">
+             <Plus className="w-3.5 h-3.5" /> Record Expense
+          </button>
+        </div>
+        <div className="divide-y divide-rose-50/50">
+          {stats?.latestExpenses?.length > 0 ? (
+            stats.latestExpenses.map((exp: any) => (
+              <div key={exp.id} className="p-5 flex items-center justify-between hover:bg-rose-50/10 transition-colors">
+                <div className="flex items-center gap-4">
+                   <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500">
+                      <Wallet className="w-5 h-5" />
+                   </div>
+                   <div>
+                     <p className="text-sm font-bold text-slate-900">{exp.category}</p>
+                     <p className="text-[11px] text-slate-500">{exp.description || 'General gym expense'}</p>
+                   </div>
+                </div>
+                <div className="text-right">
+                   <p className="text-sm font-black text-rose-600">-{formatCurrency(exp.amount)}</p>
+                   <p className="text-[10px] text-slate-400">{(new Date(exp.expense_date)).toLocaleDateString()}</p>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="py-16 text-center text-slate-400">
+              <p className="text-sm">No expenses recorded recently</p>
+            </div>
+          )}
+        </div>
+      </div>
+
 
       {/* Overdue Members Alert Section */}
       <div className="card p-6 border-rose-100">

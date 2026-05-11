@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const DB_PATH = path.resolve(__dirname, '../../../../dev.db');
+const DB_PATH = path.resolve(__dirname, '../../prisma/dev.db');
 const BACKUP_DIR = path.resolve(__dirname, '../../../../backups');
 const MAX_BACKUP_DAYS = 14;
 

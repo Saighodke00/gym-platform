@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import { initMobileFeatures } from './lib/mobile'
 import AppLayout from '@/components/layout/AppLayout'
 import LoginPage from '@/pages/auth/LoginPage'
 import DashboardPage from '@/pages/dashboard/DashboardPage'
@@ -15,6 +17,10 @@ import MemberCheckin from '@/pages/public/MemberCheckin'
 import KioskPage from '@/pages/attendance/KioskPage'
 import PaymentsPage from '@/pages/payments/PaymentsPage'
 import WorkoutsPage from '@/pages/workouts/WorkoutsPage'
+import AnalyticsPage from '@/pages/analytics/AnalyticsPage'
+import EnquiryPage from '@/pages/enquiries/EnquiryPage'
+import ExpensePage from '@/pages/expenses/ExpensePage'
+import BulkMessagePage from '@/pages/notifications/BulkMessagePage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -27,6 +33,10 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    initMobileFeatures()
+  }, [])
+
   return (
     <BrowserRouter>
       <Routes>
@@ -51,6 +61,10 @@ export default function App() {
           <Route path="attendance" element={<AttendancePage />} />
           <Route path="payments" element={<PaymentsPage />} />
           <Route path="workouts" element={<WorkoutsPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="enquiries" element={<EnquiryPage />} />
+          <Route path="expenses" element={<ExpensePage />} />
+          <Route path="broadcast" element={<BulkMessagePage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 

@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -29,6 +29,9 @@ model Gym {
   notifications     Notification[]
   users             User[]
   workout_plans     WorkoutPlan[]
+  enquiries         Enquiry[]
+  expenses          Expense[]
+  message_templates MessageTemplate[]
 
   @@map("gyms")
 }
@@ -403,3 +406,51 @@ model AuditLog {
 
   @@map("audit_logs")
 }
+
+model Enquiry {
+  id              String   @id @default(uuid())
+  gym_id          String
+  name            String
+  phone           String
+  email           String?
+  source          String?  // e.g., Walk-in, Website, Social Media
+  status          String   @default("new") // e.g., new, contacted, demo, joined, closed
+  interested_in   String?  // e.g., Weight loss, Cardio, Yoga
+  notes           String?
+  follow_up_date  DateTime?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  gym             Gym      @relation(fields: [gym_id], references: [id])
+
+  @@map("enquiries")
+}
+
+model Expense {
+  id              String   @id @default(uuid())
+  gym_id          String
+  category        String   // e.g., Rent, Electricity, Salaries, Equipment
+  amount          Float
+  description     String?
+  receipt_url     String?
+  expense_date    DateTime @default(now())
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  gym             Gym      @relation(fields: [gym_id], references: [id])
+
+  @@map("expenses")
+}
+
+model MessageTemplate {
+  id              String   @id @default(uuid())
+  gym_id          String
+  name            String
+  subject         String?
+  content         String   // Using placeholders like {{name}}
+  type            String   // e.g., Welcome, Renewal, Birthday, Promotion
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  gym             Gym      @relation(fields: [gym_id], references: [id])
+
+  @@map("message_templates")
+}
+
