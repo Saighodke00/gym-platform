@@ -5,11 +5,8 @@ import { prisma } from '../config/database';
 import { validate } from '../middleware/validate';
 import { authRateLimitMiddleware } from '../middleware/rateLimiter';
 import { authenticate } from '../middleware/auth';
-import {
-  generateTokens,
-  storeRefreshToken,
-  invalidateRefreshToken,
   validateRefreshToken,
+  UserRole,
 } from '../middleware/auth';
 import { sendSuccess, sendError, ErrorCodes } from '../utils/response';
 import jwt from 'jsonwebtoken';
@@ -47,7 +44,7 @@ router.post('/login', authRateLimitMiddleware, validate(loginSchema), async (req
   const { accessToken, refreshToken } = generateTokens({
     sub: user.id,
     gymId: user.gym_id,
-    role: user.role,
+    role: user.role as UserRole,
     email: user.email,
   });
 
@@ -64,7 +61,7 @@ router.post('/login', authRateLimitMiddleware, validate(loginSchema), async (req
       id: user.id,
       name: user.name,
       email: user.email,
-      role: user.role,
+      role: user.role as UserRole,
       gymId: user.gym_id,
       gymName: user.gym.name,
     },
@@ -94,7 +91,7 @@ router.post('/refresh', validate(refreshSchema), async (req, res) => {
     const tokens = generateTokens({
       sub: user.id,
       gymId: user.gym_id,
-      role: user.role,
+      role: user.role as UserRole,
       email: user.email,
     });
 
