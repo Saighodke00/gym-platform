@@ -1,8 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
-import { redis } from '../config/redis';
+import { redis, isRedisConnected } from '../config/redis';
 import { sendError, ErrorCodes } from '../utils/response';
+
+// Memory fallback for refresh tokens if Redis is down
+const memoryRefreshTokens = new Map<string, string>();
+
 // Define UserRole type manually as it's a string in the Prisma schema
 export type UserRole = 'admin' | 'trainer' | 'member';
 
@@ -68,16 +72,32 @@ export function generateTokens(payload: Omit<JwtPayload, 'iat' | 'exp'>) {
   return { accessToken, refreshToken };
 }
 
+
 export async function storeRefreshToken(userId: string, token: string) {
-  // Store with 7-day TTL (matching refresh expiry)
-  await redis.setex(`refresh:${userId}`, 7 * 24 * 60 * 60, token);
+  if (isRedisConnected) {
+    await redis.setex(`refresh:${userId}`, 7 * 24 * 60 * 60, token);
+  } else {
+    memoryRefreshTokens.set(userId, token);
+    // Cleanup old token after 7 days (primitive)
+    setTimeout(() => memoryRefreshTokens.delete(userId), 7 * 24 * 60 * 60 * 1000);
+  }
 }
 
 export async function invalidateRefreshToken(userId: string) {
-  await redis.del(`refresh:${userId}`);
+  if (isRedisConnected) {
+    await redis.del(`refresh:${userId}`);
+  } else {
+    memoryRefreshTokens.delete(userId);
+  }
 }
 
 export async function validateRefreshToken(userId: string, token: string): Promise<boolean> {
-  const stored = await redis.get(`refresh:${userId}`);
-  return stored === token;
+  if (isRedisConnected) {
+    const stored = await redis.get(`refresh:${userId}`);
+    return stored === token;
+  } else {
+    const stored = memoryRefreshTokens.get(userId);
+    return stored === token;
+  }
 }
+
