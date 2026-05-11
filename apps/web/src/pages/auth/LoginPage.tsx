@@ -2,12 +2,13 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Eye, EyeOff, Zap, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Zap, Loader2, Monitor } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import api from '@/lib/api'
 import { useAuthStore } from '@/store/authStore'
 import { cn } from '@/lib/utils'
+import { Capacitor } from '@capacitor/core'
 
 const loginSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -35,6 +36,15 @@ export default function LoginPage() {
     } catch (err: any) {
       const msg = err.response?.data?.error?.message || 'Login failed. Please try again.'
       toast.error(msg)
+    }
+  }
+
+  const handleManualApi = () => {
+    const current = localStorage.getItem('gdk_api_url') || `http://192.168.0.102:4000/api/v1`
+    const newUrl = window.prompt('🔧 Enter Backend API URL:', current)
+    if (newUrl) {
+      localStorage.setItem('gdk_api_url', newUrl)
+      window.location.reload()
     }
   }
 
@@ -126,6 +136,16 @@ export default function LoginPage() {
               <p>🏋️ Trainer: <span className="text-white">trainer@gdkgym.com</span> / <span className="text-white">Trainer@GDK123</span></p>
             </div>
           </div>
+
+          {Capacitor.isNativePlatform() && (
+            <button 
+              type="button"
+              onClick={handleManualApi}
+              className="w-full mt-4 text-[10px] text-primary-300 hover:text-white uppercase tracking-widest font-bold flex items-center justify-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity"
+            >
+              <Monitor className="w-3 h-3" /> Manual API Setup
+            </button>
+          )}
         </div>
 
         <p className="text-center text-primary-300 text-xs mt-6">

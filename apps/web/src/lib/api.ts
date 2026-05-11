@@ -2,6 +2,13 @@ import axios from 'axios'
 import { useAuthStore } from '@/store/authStore'
 
 const getBaseURL = () => {
+  // Check for manual override (useful for debugging on real devices)
+  const override = localStorage.getItem('gdk_api_url')
+  if (override) {
+    console.log(`🔌 Using API Override: ${override}`)
+    return override
+  }
+
   // If we are running on a mobile device (Capacitor)
   const isNative = window.location.protocol === 'capacitor:'
   const isMobileView = window.innerWidth < 768
@@ -15,8 +22,10 @@ const getBaseURL = () => {
       return 'http://10.0.2.2:4000/api/v1'
     }
     
-    // Default to local IP for physical devices (Update this to your PC's IP if needed)
-    return 'http://192.168.0.102:4000/api/v1'
+    // Default to local IP for physical devices (Automatically updated by script)
+    const localIP = '192.168.0.102'
+    console.log(`📱 Native Platform Detected. Using Local IP: ${localIP}`)
+    return `http://${localIP}:4000/api/v1`
   }
 
   // Otherwise use the relative path (works for web and dev proxy)
