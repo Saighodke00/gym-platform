@@ -1,28 +1,42 @@
 import { Request, Response, NextFunction } from 'express';
-import { RateLimiterRedis } from 'rate-limiter-flexible';
-import { redis } from '../config/redis';
+import { RateLimiterRedis, RateLimiterMemory } from 'rate-limiter-flexible';
+import { redis, isRedisConnected } from '../config/redis';
 import { sendError, ErrorCodes } from '../utils/response';
 
-const rateLimiter = new RateLimiterRedis({
+// Redis Limiters
+const redisRateLimiter = new RateLimiterRedis({
   storeClient: redis,
   keyPrefix: 'rl',
-  points: 100,        // 100 requests
-  duration: 60,       // per 60 seconds per user
-  blockDuration: 60,  // block for 60s if exceeded
+  points: 100,
+  duration: 60,
+  blockDuration: 60,
 });
 
-const authRateLimiter = new RateLimiterRedis({
+const redisAuthRateLimiter = new RateLimiterRedis({
   storeClient: redis,
   keyPrefix: 'rl:auth',
-  points: 10,         // 10 login attempts
-  duration: 60 * 15,  // per 15 minutes
-  blockDuration: 60 * 30, // block 30 min
+  points: 10,
+  duration: 60 * 15,
+  blockDuration: 60 * 30,
+});
+
+// Memory Limiters (Fallbacks)
+const memoryRateLimiter = new RateLimiterMemory({
+  points: 100,
+  duration: 60,
+});
+
+const memoryAuthRateLimiter = new RateLimiterMemory({
+  points: 10,
+  duration: 60 * 15,
 });
 
 export async function rateLimitMiddleware(req: Request, res: Response, next: NextFunction) {
   const key = req.user?.sub || req.ip || 'anonymous';
+  const limiter = isRedisConnected ? redisRateLimiter : memoryRateLimiter;
+  
   try {
-    await rateLimiter.consume(key);
+    await limiter.consume(key);
     next();
   } catch {
     sendError(res, ErrorCodes.RATE_LIMITED, 'Too many requests. Please slow down.', 429);
@@ -31,10 +45,13 @@ export async function rateLimitMiddleware(req: Request, res: Response, next: Nex
 
 export async function authRateLimitMiddleware(req: Request, res: Response, next: NextFunction) {
   const key = req.ip || 'anonymous';
+  const limiter = isRedisConnected ? redisAuthRateLimiter : memoryAuthRateLimiter;
+  
   try {
-    await authRateLimiter.consume(key);
+    await limiter.consume(key);
     next();
   } catch {
     sendError(res, ErrorCodes.RATE_LIMITED, 'Too many login attempts. Try again in 30 minutes.', 429);
   }
 }
+
