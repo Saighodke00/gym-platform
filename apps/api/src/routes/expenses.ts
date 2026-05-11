@@ -40,6 +40,7 @@ router.post('/', validate(expenseSchema), async (req, res) => {
 
 // DELETE /api/v1/expenses/:id
 router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
   await prisma.expense.delete({
     where: { id, gym_id: req.user!.gymId },
   });

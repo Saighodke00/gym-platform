@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
     };
 
     if (status && status !== 'All') {
-      where.status = status.toLowerCase();
+      where.status = String(status).toLowerCase();
     }
 
     if (search) {

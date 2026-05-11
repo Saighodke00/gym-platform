@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import { prisma } from '../config/database';
 import { sendSuccess } from '../utils/response';
 import { authenticate } from '../middleware/auth';
@@ -7,9 +7,9 @@ import { asyncHandler } from '../utils/asyncHandler';
 const router = Router();
 
 // ─── GET GYM PROFILE ──────────────────────────────────────────────────────────
-router.get('/profile', authenticate, asyncHandler(async (req, res) => {
+router.get('/profile', authenticate, asyncHandler(async (req: Request, res: Response) => {
   const gym = await prisma.gym.findFirst({
-    where: { users: { some: { id: req.user.id } } }
+    where: { users: { some: { id: req.user!.sub } } }
   });
 
   if (!gym) {
@@ -22,9 +22,9 @@ router.get('/profile', authenticate, asyncHandler(async (req, res) => {
 }));
 
 // ─── UPDATE GYM PROFILE ───────────────────────────────────────────────────────
-router.patch('/profile', authenticate, asyncHandler(async (req, res) => {
+router.patch('/profile', authenticate, asyncHandler(async (req: Request, res: Response) => {
   const gym = await prisma.gym.findFirst({
-    where: { users: { some: { id: req.user.id } } }
+    where: { users: { some: { id: req.user!.sub } } }
   });
 
   if (!gym) {

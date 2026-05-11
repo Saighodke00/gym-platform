@@ -16,7 +16,7 @@ router.post('/send-expiry-reminders', async (req, res) => {
   // Find active plans expiring within the next 3 days
   const expiringPlans = await prisma.memberPlan.findMany({
     where: {
-      gym_id: req.user!.gymId,
+      member: { gym_id: req.user!.gymId },
       status: 'active',
       end_date: {
         gte: now,

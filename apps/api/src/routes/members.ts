@@ -225,7 +225,7 @@ router.post('/', authorize('admin', 'trainer'), validate(createMemberSchema), as
   if (email) {
     sendNotification({
       email,
-      subject: `Welcome to ${req.user?.gymName || 'GDK Gym'}!`,
+      subject: `Welcome to GDK Gym!`,
       message: getWelcomeMessage(name, memberCode),
       channel: 'email'
     }).catch(err => console.error('Failed to send welcome email:', err));

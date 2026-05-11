@@ -48,6 +48,7 @@ router.patch('/:id', async (req, res) => {
 
 // DELETE /api/v1/templates/:id
 router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
   await prisma.messageTemplate.delete({
     where: { id, gym_id: req.user!.gymId },
   });

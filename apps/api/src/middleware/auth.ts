@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { redis } from '../config/redis';
 import { sendError, ErrorCodes } from '../utils/response';
-import { UserRole } from '@prisma/client';
+// Define UserRole type manually as it's a string in the Prisma schema
+export type UserRole = 'admin' | 'trainer' | 'member';
 
 export interface JwtPayload {
   sub: string;         // user id
