@@ -31,7 +31,7 @@ router.post('/send-expiry-reminders', async (req, res) => {
   });
 
   let sentCount = 0;
-  for (const plan of expiringPlans) {
+  for (const plan of expiringPlans as any[]) {
     if (plan.member.user.phone) {
       const daysLeft = Math.ceil((plan.end_date.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
       const message = getExpiryMessage(plan.member.user.name, daysLeft);
