@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
+
 import { config } from './config';
 import { requestLogger, errorHandler } from './middleware/audit';
 import authRoutes from './routes/auth';
@@ -23,13 +23,13 @@ import templateRoutes from './routes/templates';
 
 const app = express();
 
-// ─── SECURITY ────────────────────────────────────────────────────────────────
-app.use(helmet({
-  crossOriginEmbedderPolicy: false,
-  crossOriginResourcePolicy: false,
-  contentSecurityPolicy: false, // Disable CSP for now to ensure visibility on HF
-  frameguard: false,            // Allow Hugging Face to iframe the app
-}));
+// ─── SECURITY (Simplified for Hugging Face) ──────────────────────────────────
+app.use((_req, res, next) => {
+  res.setHeader('X-Frame-Options', 'ALLOWALL');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 
 
 app.use(cors({
