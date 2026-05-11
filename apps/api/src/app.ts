@@ -26,8 +26,11 @@ const app = express();
 // ─── SECURITY ────────────────────────────────────────────────────────────────
 app.use(helmet({
   crossOriginEmbedderPolicy: false,
-  contentSecurityPolicy: config.isProd ? undefined : false,
+  crossOriginResourcePolicy: false,
+  contentSecurityPolicy: false, // Disable CSP for now to ensure visibility on HF
+  frameguard: false,            // Allow Hugging Face to iframe the app
 }));
+
 
 app.use(cors({
   origin: config.isDev ? true : config.corsOrigin, // Allow any origin in dev for mobile testing
