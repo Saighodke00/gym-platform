@@ -23,12 +23,14 @@ import templateRoutes from './routes/templates';
 
 const app = express();
 
-// ─── SECURITY (Simplified for Hugging Face) ──────────────────────────────────
+// ─── SECURITY (Hugging Face Compatibility) ───────────────────────────────────
 app.use((_req, res, next) => {
-  res.setHeader('X-Frame-Options', 'ALLOWALL');
+  res.removeHeader('X-Frame-Options');
+  res.setHeader('Content-Security-Policy', "frame-ancestors *;");
   res.setHeader('Access-Control-Allow-Origin', '*');
   next();
 });
+
 
 
 
