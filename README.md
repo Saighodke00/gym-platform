@@ -2,7 +2,7 @@
 title: GDK Gym API
 emoji: 🏋️
 colorFrom: blue
-colorTo: navy
+colorTo: indigo
 sdk: docker
 app_port: 7860
 pinned: false
