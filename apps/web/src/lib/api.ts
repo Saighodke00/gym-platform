@@ -22,14 +22,20 @@ const getBaseURL = () => {
       return 'http://10.0.2.2:4000/api/v1'
     }
     
-    // Default to local IP for physical devices (Automatically updated by script)
+    // Check for Cloud URL override in localStorage (High Priority)
+    const cloudUrl = localStorage.getItem('gdk_api_url')
+    if (cloudUrl) return cloudUrl
+
+    // Default to local IP for physical devices (updated by script)
     const localIP = '192.168.0.102'
     console.log(`📱 Native Platform Detected. Using Local IP: ${localIP}`)
     return `http://${localIP}:4000/api/v1`
   }
 
-  // Otherwise use the relative path (works for web and dev proxy)
-  return '/api/v1'
+  // Production Web URL (Relative to hosted frontend or hardcoded Cloud API)
+  const PROD_API_URL = 'https://sai-ban111-gym-app.hf.space/api/v1'
+  
+  return window.location.hostname === 'localhost' ? '/api/v1' : PROD_API_URL
 }
 
 const api = axios.create({

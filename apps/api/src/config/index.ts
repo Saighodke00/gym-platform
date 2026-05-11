@@ -6,7 +6,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../../../.env') });
 
 export const config = {
-  port: parseInt(process.env.PORT || '4000'),
+  port: parseInt(process.env.PORT || '7860'),
   nodeEnv: process.env.NODE_ENV || 'development',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   publicUrl: process.env.PUBLIC_URL || '', // For internet access (tunnels)

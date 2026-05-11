@@ -1,0 +1,12 @@
+node_modules
+dist
+.env
+*.log
+apps/web
+apps/desktop
+android
+ios
+.git
+.vscode
+.wwebjs_auth
+.wwebjs_cache
