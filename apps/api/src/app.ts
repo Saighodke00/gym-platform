@@ -35,11 +35,17 @@ app.use((_req, res, next) => {
 
 
 app.use(cors({
-  origin: config.isDev ? true : config.corsOrigin, // Allow any origin in dev for mobile testing
+  origin: config.isDev ? true : [
+    config.corsOrigin,
+    'capacitor://localhost',
+    'http://localhost',
+    'https://localhost'
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
+
 
 // ─── BODY PARSING ────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));

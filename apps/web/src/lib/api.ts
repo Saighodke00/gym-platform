@@ -13,6 +13,9 @@ const getBaseURL = () => {
   const isNative = window.location.protocol === 'capacitor:'
   const isMobileView = window.innerWidth < 768
 
+  // Production Cloud URL
+  const PROD_API_URL = 'https://sai-ban111-gym-app.hf.space/api/v1'
+
   if (isNative || (window.location.hostname === 'localhost' && isMobileView)) {
     // Check if we are in an Android Emulator
     const ua = navigator.userAgent.toLowerCase()
@@ -22,21 +25,14 @@ const getBaseURL = () => {
       return 'http://10.0.2.2:4000/api/v1'
     }
     
-    // Check for Cloud URL override in localStorage (High Priority)
-    const cloudUrl = localStorage.getItem('gdk_api_url')
-    if (cloudUrl) return cloudUrl
-
-    // Default to local IP for physical devices (updated by script)
-    const localIP = '192.168.0.102'
-    console.log(`📱 Native Platform Detected. Using Local IP: ${localIP}`)
-    return `http://${localIP}:4000/api/v1`
+    // Default to Cloud URL for mobile devices so it works everywhere
+    console.log(`📱 Native Platform Detected. Connecting to Cloud API: ${PROD_API_URL}`)
+    return PROD_API_URL
   }
 
-  // Production Web URL (Relative to hosted frontend or hardcoded Cloud API)
-  const PROD_API_URL = 'https://sai-ban111-gym-app.hf.space/api/v1'
-  
   return window.location.hostname === 'localhost' ? '/api/v1' : PROD_API_URL
 }
+
 
 const api = axios.create({
   baseURL: getBaseURL(),
