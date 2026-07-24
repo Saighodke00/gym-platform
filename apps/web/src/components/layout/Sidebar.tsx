@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Users, CreditCard, CalendarCheck,
   Dumbbell, BarChart3, Settings, LogOut, ChevronLeft,
-  ChevronRight, Zap, IndianRupee, MessageSquare, ClipboardList, Wallet
+  ChevronRight, Zap, IndianRupee, MessageSquare, ClipboardList, Wallet, Camera
 } from 'lucide-react'
 import { useAuthStore } from '@/store/authStore'
 import api from '@/lib/api'
@@ -27,6 +27,7 @@ const memberNav = [
   { to: '/member/dashboard', icon: LayoutDashboard, label: 'My Dashboard' },
   { to: '/member/plan',      icon: CreditCard,      label: 'My Plan' },
   { to: '/member/workouts',  icon: Dumbbell,        label: 'My Workouts' },
+  { to: '/member/progress',  icon: Camera,          label: 'Progress Photos' },
   { to: '/settings',         icon: Settings,        label: 'Settings' },
 ]
 

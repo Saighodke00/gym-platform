@@ -49,6 +49,29 @@ router.post('/templates', authorize('admin', 'trainer'), async (req, res) => {
   return sendSuccess(res, template, 201);
 });
 
+// GET /api/v1/workouts/my-plan
+router.get('/my-plan', async (req, res) => {
+  if (req.user!.role !== 'member') {
+    return sendError(res, ErrorCodes.FORBIDDEN, 'Only members can access this route', 403);
+  }
+
+  const member = await prisma.member.findFirst({
+    where: { user_id: req.user!.sub, gym_id: req.user!.gymId }
+  });
+
+  if (!member) return sendError(res, ErrorCodes.NOT_FOUND, 'Member profile not found', 404);
+
+  const plan = await prisma.workoutPlan.findFirst({
+    where: { 
+      sessions: { some: { member_id: member.id } },
+      is_template: false
+    },
+    include: { days: true, sessions: { orderBy: { session_date: 'desc' }, take: 10 } },
+    orderBy: { created_at: 'desc' }
+  });
+  return sendSuccess(res, plan);
+});
+
 // GET /api/v1/workouts/member/:id
 router.get('/member/:id', async (req, res) => {
   const memberId = req.params.id;

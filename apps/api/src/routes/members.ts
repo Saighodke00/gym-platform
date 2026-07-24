@@ -154,6 +154,32 @@ router.get('/me/profile', async (req, res) => {
   return sendSuccess(res, member);
 });
 
+// ─── LOG MEMBER PROGRESS (Self) ───────────────────────────────────────────────
+router.post('/me/progress', async (req, res) => {
+  if (req.user!.role !== 'member') {
+    return sendError(res, ErrorCodes.FORBIDDEN, 'Only members can log progress', 403);
+  }
+
+  const { weight_kg, photos, notes } = req.body;
+
+  const member = await prisma.member.findFirst({
+    where: { user_id: req.user!.sub, gym_id: req.user!.gymId }
+  });
+
+  if (!member) return sendError(res, ErrorCodes.NOT_FOUND, 'Member not found', 404);
+
+  const progress = await prisma.progressLog.create({
+    data: {
+      member_id: member.id,
+      weight_kg: weight_kg ? parseFloat(weight_kg) : null,
+      photos: photos ? JSON.stringify(photos) : "[]",
+      notes
+    }
+  });
+
+  return sendSuccess(res, progress, 201);
+});
+
 // ─── GET SINGLE MEMBER ────────────────────────────────────────────────────────
 
 router.get('/:id', async (req, res) => {

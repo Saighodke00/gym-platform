@@ -25,6 +25,7 @@ import BulkMessagePage from '@/pages/notifications/BulkMessagePage'
 import MemberDashboardPage from '@/pages/member/MemberDashboardPage'
 import MemberPlanPage from '@/pages/member/MemberPlanPage'
 import MemberWorkoutsPage from '@/pages/member/MemberWorkoutsPage'
+import MemberProgressPage from '@/pages/member/MemberProgressPage'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
@@ -82,6 +83,7 @@ export default function App() {
           <Route path="member/dashboard" element={<MemberDashboardPage />} />
           <Route path="member/plan" element={<MemberPlanPage />} />
           <Route path="member/workouts" element={<MemberWorkoutsPage />} />
+          <Route path="member/progress" element={<MemberProgressPage />} />
         </Route>
 
         {/* Fallback */}

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, Users, CreditCard, CalendarCheck, Dumbbell } from 'lucide-react'
+import { LayoutDashboard, Users, CreditCard, CalendarCheck, Dumbbell, Camera } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { triggerHaptic } from '@/lib/mobile'
 import { ImpactStyle } from '@capacitor/haptics'
@@ -18,6 +18,7 @@ const memberNav = [
   { to: '/member/dashboard', icon: LayoutDashboard, label: 'Home' },
   { to: '/member/plan',      icon: CreditCard,      label: 'My Plan' },
   { to: '/member/workouts',  icon: Dumbbell,        label: 'Workouts' },
+  { to: '/member/progress',  icon: Camera,          label: 'Progress' },
 ]
 
 export default function MobileNav() {
