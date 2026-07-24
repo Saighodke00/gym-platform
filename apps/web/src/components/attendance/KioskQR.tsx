@@ -42,8 +42,8 @@ export default function KioskQR() {
   const checkinUrl = qrUrl
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 bg-white rounded-3xl shadow-elevated border border-border max-w-md mx-auto">
-      <div className="w-16 h-16 rounded-2xl bg-primary-700 flex items-center justify-center mb-6 shadow-glow">
+    <div className="flex flex-col items-center justify-center p-8 bg-white rounded-3xl shadow-elevated border border-border max-w-md mx-auto print:shadow-none print:border-none print:max-w-full print:w-[100vw] print:h-[100vh] print:p-0">
+      <div className="w-16 h-16 rounded-2xl bg-primary-700 flex items-center justify-center mb-6 shadow-glow print:hidden">
         <Zap className="w-8 h-8 text-white" strokeWidth={2.5} />
       </div>
       
@@ -52,7 +52,7 @@ export default function KioskQR() {
         Scan this QR code with Google Lens or your phone camera to mark your attendance.
       </p>
 
-      <div className="p-6 bg-white rounded-2xl border-2 border-primary-100 mb-8 relative group">
+      <div className="p-6 bg-white rounded-2xl border-2 border-primary-100 mb-8 relative group print:border-0 print:mb-2 print:scale-150 print:mt-12">
         <QRCodeSVG 
           value={checkinUrl} 
           size={240}
@@ -72,7 +72,7 @@ export default function KioskQR() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3 w-full">
+      <div className="flex flex-col gap-3 w-full print:hidden">
         <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100">
           <Smartphone className="w-5 h-5 text-primary-700" />
           <div className="flex-1">
