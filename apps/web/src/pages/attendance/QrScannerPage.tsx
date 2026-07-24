@@ -5,6 +5,7 @@ import api from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { triggerHaptic, scheduleLocalNotification } from '@/lib/mobile'
 import { ImpactStyle } from '@capacitor/haptics'
+import { Scanner } from '@yudiel/react-qr-scanner'
 
 type ScanResult = {
   status: 'success' | 'expired' | 'already_checked_in' | 'error'
@@ -145,19 +146,22 @@ export default function QrScannerPage() {
               <p className="text-slate-400 text-sm">Verifying membership...</p>
             </div>
           ) : !result ? (
-            <div className="text-center">
-              {/* QR Scan Animation */}
-              <div className="relative w-40 h-40 mx-auto mb-4">
-                <div className="absolute inset-0 border-2 border-primary-500 rounded-xl" />
-                <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-primary-400 rounded-tl-lg" />
-                <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-primary-400 rounded-tr-lg" />
-                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-primary-400 rounded-bl-lg" />
-                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-primary-400 rounded-br-lg" />
-                {/* Scan line */}
-                <div className="absolute left-2 right-2 h-0.5 bg-primary-400 top-1/2 -translate-y-1/2 animate-pulse" />
-                <QrCode className="absolute inset-0 m-auto w-16 h-16 text-primary-500 opacity-30" />
-              </div>
-              <p className="text-slate-400 text-sm">Point QR code at camera or use USB scanner</p>
+            <div className="text-center rounded-xl overflow-hidden bg-black/50 aspect-square relative">
+              <Scanner
+                onScan={(detectedCodes) => {
+                  if (detectedCodes.length > 0) {
+                    handleScan(detectedCodes[0].rawValue)
+                  }
+                }}
+                onError={(error) => {
+                  console.error(error)
+                }}
+                components={{
+                  tracker: true,
+                  audio: true,
+                  onOff: true
+                }}
+              />
             </div>
           ) : (
             <div className="text-center animate-fade-in">
