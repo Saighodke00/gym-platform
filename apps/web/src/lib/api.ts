@@ -9,19 +9,8 @@ const getBaseURL = () => {
     return override
   }
 
-  const isNative = window.location.protocol === 'capacitor:'
-  const isElectron = window.location.protocol === 'file:'
-  
-  // Production Cloud URL for true mobile apps and PC apps
-  const PROD_API_URL = 'https://sai-ban111-gym-app.hf.space/api/v1'
-
-  if (isNative || isElectron) {
-    return PROD_API_URL
-  }
-
-  // For ANY browser environment (localhost, 192.168.X.X, ngrok, cloudflare tunnels, etc.)
-  // We use relative path so Vite proxy handles it.
-  return '/api/v1'
+  // Always use the Cloud Production API for PC, Mobile, and Web!
+  return 'https://sai-ban111-gym-app.hf.space/api/v1'
 }
 
 
@@ -72,7 +61,7 @@ api.interceptors.response.use(
       }
 
       try {
-        const { data } = await api.post('/auth/refresh', { refreshToken })
+        const { data } = await axios.post(`${getBaseURL()}/auth/refresh`, { refreshToken })
         useAuthStore.getState().setTokens(data.data.accessToken, data.data.refreshToken)
         processQueue(null, data.data.accessToken)
         originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`

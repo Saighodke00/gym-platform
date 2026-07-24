@@ -89,7 +89,7 @@ app.use(`${API}/expenses`, expenseRoutes);
 app.use(`${API}/templates`, templateRoutes);
 
 // ─── SERVE REACT FRONTEND ──────────────────────────────────────
-const webDistPath = path.join(__dirname, '../../../web/dist');
+const webDistPath = path.join(__dirname, '../../web/dist');
 const fs = require('fs');
 
 if (!config.isDev || fs.existsSync(webDistPath)) {

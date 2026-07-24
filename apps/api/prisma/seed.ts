@@ -57,70 +57,10 @@ async function main() {
 
   // ─── MEMBERSHIP PLANS ─────────────────────────────────────────────────────
   const plans = [
-    {
-      name: 'Monthly Basic',
-      description: 'Gym access only — ideal for self-motivated members',
-      duration_days: 30,
-      price: 1500,
-      gst_rate: 18,
-      features: ['Gym Access', 'Locker Room', 'Free WiFi'],
-    },
-    {
-      name: 'Student Monthly',
-      description: 'Discounted plan for students with valid ID',
-      duration_days: 30,
-      price: 999,
-      gst_rate: 18,
-      features: ['Gym Access', 'Locker Room'],
-    },
-    {
-      name: '1 Month Personal Training',
-      description: 'Dedicated 1-on-1 personal trainer with custom diet plan & daily tracking',
-      duration_days: 30,
-      price: 5000,
-      gst_rate: 18,
-      features: ['Personal Trainer (5 days/week)', 'Custom Macro Diet Plan', 'Body Composition Analysis', 'Locker Room'],
-    },
-    {
-      name: 'Quarterly Pro',
-      description: 'Gym + 1 trainer session/week',
-      duration_days: 90,
-      price: 4000,
-      gst_rate: 18,
-      features: ['Gym Access', 'Trainer Sessions (4/month)', 'Diet Consultation', 'Locker Room'],
-    },
-    {
-      name: 'Couples / Buddy Quarterly',
-      description: 'Special 3-month package for two fitness partners',
-      duration_days: 90,
-      price: 7000,
-      gst_rate: 18,
-      features: ['Access for 2 Members', 'Free Locker Access', 'Steam & Sauna (2x/month)', 'Diet Consultation'],
-    },
-    {
-      name: 'Half-Yearly Elite',
-      description: 'Full access with personal training and diet plan',
-      duration_days: 180,
-      price: 7500,
-      gst_rate: 18,
-      features: ['Gym Access', 'Personal Trainer', 'Diet Plan', 'Progress Tracking', 'Guest Passes (2)'],
-    },
-    {
-      name: 'Annual Premium',
-      description: 'Best value — all-inclusive yearly membership',
-      duration_days: 365,
-      price: 12000,
-      gst_rate: 18,
-      features: ['Unlimited Gym Access', 'Personal Trainer', 'Diet Plan', 'Body Analysis Monthly', 'Guest Passes (5)', 'Priority Booking'],
-    },
-    {
-      name: 'VIP All-Access Pass',
-      description: 'Unlimited 365-day access to all equipment, classes, personal trainer & supplements perk',
-      duration_days: 365,
-      price: 18000,
-      gst_rate: 18,
-      features: ['VIP Locker & Towel Service', 'Unlimited Personal Training', 'Custom Nutrition Plan', 'Group Classes Included', 'Free Protein Shakes (10/mo)'],
-    },
+    { name: 'Monthly Basic', description: 'Gym access only', duration_days: 30, price: 1500, gst_rate: 18, features: ['Gym Access', 'Locker Room', 'Free WiFi'] },
+    { name: 'Student Monthly', description: 'Discounted plan for students', duration_days: 30, price: 999, gst_rate: 18, features: ['Gym Access', 'Locker Room'] },
+    { name: 'Quarterly Pro', description: 'Gym + 1 trainer session/week', duration_days: 90, price: 4000, gst_rate: 18, features: ['Gym Access', 'Trainer Sessions (4/month)', 'Diet Consultation', 'Locker Room'] },
+    { name: 'Annual Premium', description: 'Best value — all-inclusive yearly membership', duration_days: 365, price: 12000, gst_rate: 18, features: ['Unlimited Gym Access', 'Personal Trainer', 'Diet Plan', 'Body Analysis Monthly', 'Guest Passes (5)', 'Priority Booking'] }
   ];
 
   for (const planData of plans) {
@@ -135,52 +75,136 @@ async function main() {
       },
     });
   }
-  console.log('✅ 8 Membership plans created');
+  console.log('✅ Membership plans created');
 
-  // ─── EXERCISE LIBRARY ──────────────────────────────────────────────────────
-  const exercises = [
-    { name: 'Barbell Bench Press', muscle_groups: ['chest', 'triceps', 'shoulders'], equipment: 'barbell', default_sets: 4, default_reps: 10, difficulty: 3, video_url: 'https://youtube.com/watch?v=bench-press' },
-    { name: 'Squat', muscle_groups: ['quadriceps', 'glutes', 'hamstrings'], equipment: 'barbell', default_sets: 4, default_reps: 8, difficulty: 4 },
-    { name: 'Deadlift', muscle_groups: ['back', 'glutes', 'hamstrings'], equipment: 'barbell', default_sets: 3, default_reps: 6, difficulty: 5 },
-    { name: 'Pull-Up', muscle_groups: ['back', 'biceps'], equipment: 'bodyweight', default_sets: 3, default_reps: 10, difficulty: 3 },
-    { name: 'Dumbbell Shoulder Press', muscle_groups: ['shoulders', 'triceps'], equipment: 'dumbbells', default_sets: 3, default_reps: 12, difficulty: 2 },
-    { name: 'Dumbbell Bicep Curl', muscle_groups: ['biceps'], equipment: 'dumbbells', default_sets: 3, default_reps: 15, difficulty: 1 },
-    { name: 'Tricep Dips', muscle_groups: ['triceps', 'chest'], equipment: 'bodyweight', default_sets: 3, default_reps: 12, difficulty: 2 },
-    { name: 'Leg Press', muscle_groups: ['quadriceps', 'glutes'], equipment: 'machine', default_sets: 4, default_reps: 12, difficulty: 2 },
-    { name: 'Cable Lat Pulldown', muscle_groups: ['back', 'biceps'], equipment: 'cable', default_sets: 3, default_reps: 12, difficulty: 2 },
-    { name: 'Plank', muscle_groups: ['core', 'shoulders'], equipment: 'none', default_sets: 3, default_reps: 1, rest_seconds: 30, difficulty: 2 },
-    { name: 'Burpees', muscle_groups: ['full body'], equipment: 'none', default_sets: 3, default_reps: 15, difficulty: 4 },
-    { name: 'Lunges', muscle_groups: ['quadriceps', 'glutes'], equipment: 'none', default_sets: 3, default_reps: 12, difficulty: 2 },
-    { name: 'Romanian Deadlift', muscle_groups: ['hamstrings', 'glutes', 'back'], equipment: 'barbell', default_sets: 3, default_reps: 10, difficulty: 3 },
-    { name: 'Incline Dumbbell Press', muscle_groups: ['upper chest', 'triceps'], equipment: 'dumbbells', default_sets: 3, default_reps: 12, difficulty: 2 },
-    { name: 'Face Pull', muscle_groups: ['rear delts', 'traps'], equipment: 'cable', default_sets: 3, default_reps: 15, difficulty: 2 },
-    { name: 'Treadmill Run', muscle_groups: ['cardio', 'legs'], equipment: 'machine', default_sets: 1, default_reps: 20, rest_seconds: 0, difficulty: 2 },
-    { name: 'Jump Rope', muscle_groups: ['cardio', 'calves'], equipment: 'none', default_sets: 3, default_reps: 100, difficulty: 2 },
-    { name: 'Mountain Climbers', muscle_groups: ['core', 'cardio'], equipment: 'none', default_sets: 3, default_reps: 30, difficulty: 3 },
+  const allPlans = await prisma.membershipPlan.findMany({ where: { gym_id: gym.id } });
+
+  // ─── MOCK MEMBERS ─────────────────────────────────────────────────────
+  const memberData = [
+    { name: 'Amit Sharma', email: 'amit.sharma@example.com', phone: '9111111111', planIndex: 0 },
+    { name: 'Priya Singh', email: 'priya.singh@example.com', phone: '9222222222', planIndex: 2 },
+    { name: 'Rohan Gupta', email: 'rohan.gupta@example.com', phone: '9333333333', planIndex: 3 },
+    { name: 'Neha Verma', email: 'neha.verma@example.com', phone: '9444444444', planIndex: 0 },
+    { name: 'Vikram Singh', email: 'vikram.singh@example.com', phone: '9555555555', planIndex: 2 },
   ];
 
-  for (const ex of exercises) {
-    await prisma.exercise.create({
-      data: {
-        gym_id: gym.id,
-        name: ex.name,
-        muscle_groups: JSON.stringify(ex.muscle_groups),
-        equipment: ex.equipment,
-        default_sets: ex.default_sets,
-        default_reps: ex.default_reps,
-        rest_seconds: (ex as any).rest_seconds ?? 60,
-        difficulty: ex.difficulty,
-        video_url: (ex as any).video_url ?? null,
-      },
-    }).catch(() => {}); // Skip if exists
-  }
-  console.log('✅ 18 Exercises seeded');
+  const defaultPassword = await bcrypt.hash('Member@123', 12);
+  let memberCount = 1000;
 
-  console.log('\n🎉 Database seeded successfully!');
-  console.log('──────────────────────────────────────');
-  console.log('Admin login:   admin@gdkgym.com  /  Admin@GDK123');
-  console.log('Trainer login: trainer@gdkgym.com  /  Trainer@GDK123');
-  console.log('──────────────────────────────────────');
+  for (const mData of memberData) {
+    const existingUser = await prisma.user.findUnique({ where: { email: mData.email } });
+    if (!existingUser) {
+      const user = await prisma.user.create({
+        data: {
+          gym_id: gym.id,
+          name: mData.name,
+          email: mData.email,
+          phone: mData.phone,
+          role: 'member',
+          password_hash: defaultPassword,
+        }
+      });
+
+      const member = await prisma.member.create({
+        data: {
+          gym_id: gym.id,
+          user_id: user.id,
+          member_code: `M${memberCount++}`,
+          status: 'active',
+          joined_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // Joined 30 days ago
+        }
+      });
+
+      const selectedPlan = allPlans[mData.planIndex];
+      const memberPlan = await prisma.memberPlan.create({
+        data: {
+          member_id: member.id,
+          plan_id: selectedPlan.id,
+          start_date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // Started 15 days ago
+          end_date: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // Ends 15 days from now
+          amount_paid: selectedPlan.price,
+          status: 'active'
+        }
+      });
+
+      await prisma.payment.create({
+        data: {
+          member_id: member.id,
+          member_plan_id: memberPlan.id,
+          amount: selectedPlan.price,
+          gst_amount: selectedPlan.price * 0.18,
+          method: 'cash',
+          status: 'completed',
+          invoice_number: `INV-${member.member_code}-1`,
+          paid_at: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000)
+        }
+      });
+
+      // ─── ATTENDANCE FOR MEMBER ───────────────────────────────────────────
+      for (let i = 1; i <= 5; i++) {
+        const checkInDate = new Date(Date.now() - i * 2 * 24 * 60 * 60 * 1000);
+        await prisma.attendance.create({
+          data: {
+            member_id: member.id,
+            gym_id: gym.id,
+            checked_in_at: checkInDate,
+            method: 'qr'
+          }
+        });
+      }
+    }
+  }
+  console.log('✅ Mock Members, Plans, Payments, and Attendance created');
+
+  // ─── BROADCASTS ────────────────────────────────────────────────────────
+  await prisma.broadcast.createMany({
+    data: [
+      {
+        gym_id: gym.id,
+        title: 'Gym Maintenance this Sunday',
+        message: 'Dear Members, the gym will be closed for maintenance this Sunday from 9 AM to 2 PM.',
+        target_type: 'all',
+        status: 'delivered',
+        delivered_count: 5,
+        created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+      },
+      {
+        gym_id: gym.id,
+        title: 'New Zumba Classes!',
+        message: 'Join our new Zumba batches starting next Monday at 6 PM.',
+        target_type: 'active',
+        status: 'delivered',
+        delivered_count: 5,
+        created_at: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
+      }
+    ],
+    skipDuplicates: true,
+  });
+  console.log('✅ Broadcasts created');
+
+  // ─── ENQUIRIES ─────────────────────────────────────────────────────────
+  await prisma.enquiry.createMany({
+    data: [
+      { gym_id: gym.id, name: 'Suresh Kumar', phone: '9888888888', status: 'new', interested_in: 'Weight Loss' },
+      { gym_id: gym.id, name: 'Aditi Rao', phone: '9777777777', status: 'demo', interested_in: 'Yoga' },
+      { gym_id: gym.id, name: 'Karan Patel', phone: '9666666666', status: 'contacted', interested_in: 'Personal Training' }
+    ],
+    skipDuplicates: true,
+  });
+  console.log('✅ Enquiries created');
+
+  // ─── EXPENSES ──────────────────────────────────────────────────────────
+  await prisma.expense.createMany({
+    data: [
+      { gym_id: gym.id, category: 'Rent', amount: 50000, description: 'Monthly Rent - July', expense_date: new Date() },
+      { gym_id: gym.id, category: 'Electricity', amount: 8000, description: 'Electricity Bill', expense_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000) },
+      { gym_id: gym.id, category: 'Equipment', amount: 12000, description: 'New Dumbbells', expense_date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000) },
+    ],
+    skipDuplicates: true,
+  });
+  console.log('✅ Expenses created');
+
+  console.log('\n🎉 Comprehensive database seeding completed successfully!');
 }
 
 main()

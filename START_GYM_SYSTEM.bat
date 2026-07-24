@@ -1,16 +1,15 @@
 @echo off
-TITLE GDK Gym - Cloud System
+TITLE GDK Gym - PC App Launcher
 
 echo ──────────────────────────────────────────────────────────
-echo           GDK GYM MANAGEMENT PLATFORM (CLOUD)
+echo           GDK GYM MANAGEMENT PLATFORM (PC APP)
 echo ──────────────────────────────────────────────────────────
 echo.
-echo Loading your 24/7 cloud server...
+echo Launching your Desktop App...
+echo (Connecting securely to Hugging Face and Neon Database)
 echo.
 
-:: Open the cloud app in the default web browser
-start https://sai-ban111-gym-app.hf.space/
+:: Launch the UI and Electron App (no local API needed)
+call npm run start:pc
 
-echo ✅ Gym System launched successfully in your browser!
-echo ──────────────────────────────────────────────────────────
-timeout /t 5 >nul
+pause
