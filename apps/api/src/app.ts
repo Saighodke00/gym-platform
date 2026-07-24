@@ -88,9 +88,11 @@ app.use(`${API}/enquiries`, enquiryRoutes);
 app.use(`${API}/expenses`, expenseRoutes);
 app.use(`${API}/templates`, templateRoutes);
 
-// ─── SERVE REACT FRONTEND IN PRODUCTION ──────────────────────────────────────
-if (!config.isDev) {
-  const webDistPath = path.join(__dirname, '../../../web/dist');
+// ─── SERVE REACT FRONTEND ──────────────────────────────────────
+const webDistPath = path.join(__dirname, '../../../web/dist');
+const fs = require('fs');
+
+if (!config.isDev || fs.existsSync(webDistPath)) {
   app.use(express.static(webDistPath));
   
   app.get('*', (req, res) => {
