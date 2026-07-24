@@ -7,30 +7,32 @@ export default function KioskQR() {
   const [qrUrl, setQrUrl] = useState(`http://${window.location.hostname}:${window.location.port || '5173'}/checkin`)
 
   useEffect(() => {
-    // 1. Try Electron IPC (most reliable in desktop app)
+    // 1. Primary: Always use the public Cloud URL so it works on Mobile Data
+    const cloudUrl = 'https://sai-ban111-gym-app.hf.space'
+    setQrUrl(`${cloudUrl}/checkin`)
+
+    // 2. Secondary (Fallback): Try Electron IPC for local IP if cloud is unreachable
     if ((window as any).require) {
       try {
         const { ipcRenderer } = (window as any).require('electron')
         ipcRenderer.send('get-local-ip')
         ipcRenderer.on('local-ip', (_event: any, ip: string) => {
-          if (ip && ip !== '127.0.0.1') setQrUrl(`http://${ip}:${port}/checkin`)
+          if (ip && ip !== '127.0.0.1' && qrUrl === 'http://localhost:5173/checkin') {
+             setQrUrl(`http://${ip}:${port}/checkin`)
+          }
         })
       } catch (e) {
         console.warn('Electron IPC not available', e)
       }
     }
 
-    // 2. Fallback: Ask the backend for its local network IP OR Public URL
+    // 3. Fallback: Ask the backend for its local network IP OR Public URL
     fetch('/api/v1/system/local-ip')
       .then(r => r.json())
       .then(res => {
         if (res.success) {
-          if (res.data.public_url) {
-            // Priority: Use the tunnel/public URL if available
+          if (res.data.public_url && !res.data.public_url.includes('ngrok')) {
             setQrUrl(`${res.data.public_url}/checkin`)
-          } else if (res.data.ip && res.data.ip !== '127.0.0.1') {
-            // Secondary: Use the local network IP
-            setQrUrl(`http://${res.data.ip}:${port}/checkin`)
           }
         }
       })
@@ -78,14 +80,14 @@ export default function KioskQR() {
             <p className="text-[10px] text-slate-500 font-mono">{checkinUrl}</p>
           </div>
         </div>
-        <div className={`flex items-center gap-3 p-3 rounded-xl border ${checkinUrl.includes('trycloudflare.com') ? 'bg-green-50 border-green-100' : 'bg-amber-50 border-amber-100'}`}>
-          <div className={`w-2 h-2 rounded-full animate-pulse ${checkinUrl.includes('trycloudflare.com') ? 'bg-green-500' : 'bg-amber-500'}`} />
+        <div className={`flex items-center gap-3 p-3 rounded-xl border ${checkinUrl.includes('hf.space') ? 'bg-green-50 border-green-100' : 'bg-amber-50 border-amber-100'}`}>
+          <div className={`w-2 h-2 rounded-full animate-pulse ${checkinUrl.includes('hf.space') ? 'bg-green-500' : 'bg-amber-500'}`} />
           <div className="flex-1">
-            <p className={`text-xs font-semibold uppercase tracking-wider ${checkinUrl.includes('trycloudflare.com') ? 'text-green-900' : 'text-amber-900'}`}>
-              {checkinUrl.includes('trycloudflare.com') ? 'Internet Mode' : 'Local WiFi Mode'}
+            <p className={`text-xs font-semibold uppercase tracking-wider ${checkinUrl.includes('hf.space') ? 'text-green-900' : 'text-amber-900'}`}>
+              {checkinUrl.includes('hf.space') ? 'Internet Mode' : 'Local WiFi Mode'}
             </p>
-            <p className={`text-[10px] ${checkinUrl.includes('trycloudflare.com') ? 'text-green-700' : 'text-amber-700'}`}>
-              {checkinUrl.includes('trycloudflare.com') ? 'Accessible via Mobile Data' : 'Connect to same WiFi to scan'}
+            <p className={`text-[10px] ${checkinUrl.includes('hf.space') ? 'text-green-700' : 'text-amber-700'}`}>
+              {checkinUrl.includes('hf.space') ? 'Accessible via Mobile Data (4G/5G)' : 'Connect to same WiFi to scan'}
             </p>
           </div>
         </div>
