@@ -22,14 +22,26 @@ import EnquiryPage from '@/pages/enquiries/EnquiryPage'
 import ExpensePage from '@/pages/expenses/ExpensePage'
 import BulkMessagePage from '@/pages/notifications/BulkMessagePage'
 
+import MemberDashboardPage from '@/pages/member/MemberDashboardPage'
+import MemberPlanPage from '@/pages/member/MemberPlanPage'
+import MemberWorkoutsPage from '@/pages/member/MemberWorkoutsPage'
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />
 }
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <>{children}</>
+  const { isAuthenticated, user } = useAuthStore()
+  if (isAuthenticated) {
+    return <Navigate to={user?.role === 'member' ? '/member/dashboard' : '/dashboard'} replace />
+  }
+  return <>{children}</>
+}
+
+function RootRedirect() {
+  const { user } = useAuthStore()
+  return <Navigate to={user?.role === 'member' ? '/member/dashboard' : '/dashboard'} replace />
 }
 
 export default function App() {
@@ -51,7 +63,7 @@ export default function App() {
 
         {/* Protected */}
         <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route index element={<RootRedirect />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="members" element={<MembersPage />} />
           <Route path="members/new" element={<AddMemberPage />} />
@@ -66,10 +78,14 @@ export default function App() {
           <Route path="expenses" element={<ExpensePage />} />
           <Route path="broadcast" element={<BulkMessagePage />} />
           <Route path="settings" element={<SettingsPage />} />
+          {/* Member Portal Routes */}
+          <Route path="member/dashboard" element={<MemberDashboardPage />} />
+          <Route path="member/plan" element={<MemberPlanPage />} />
+          <Route path="member/workouts" element={<MemberWorkoutsPage />} />
         </Route>
 
         {/* Fallback */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<RootRedirect />} />
       </Routes>
     </BrowserRouter>
   )

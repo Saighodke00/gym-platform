@@ -119,6 +119,41 @@ router.get('/', validate(querySchema, 'query'), async (req, res) => {
   });
 });
 
+// ─── GET MEMBER PROFILE (Self) ────────────────────────────────────────────────
+router.get('/me/profile', async (req, res) => {
+  if (req.user!.role !== 'member') {
+    return sendError(res, ErrorCodes.FORBIDDEN, 'Only members can access this profile route', 403);
+  }
+
+  const member = await prisma.member.findFirst({
+    where: { user_id: req.user!.sub, gym_id: req.user!.gymId },
+    include: {
+      user: { select: { id: true, name: true, email: true, phone: true, role: true, is_active: true } },
+      gym: { select: { id: true, name: true, address: true, phone: true } },
+      member_plans: {
+        where: { status: 'active' },
+        include: { plan: true },
+        orderBy: { created_at: 'desc' },
+        take: 1,
+      },
+      trainer_relations: {
+        include: { trainer: { select: { id: true, name: true, email: true } } },
+      },
+      attendance: {
+        orderBy: { checked_in_at: 'desc' },
+        take: 30,
+      },
+      progress_logs: {
+        orderBy: { logged_at: 'desc' },
+        take: 10,
+      },
+    },
+  });
+
+  if (!member) return sendError(res, ErrorCodes.NOT_FOUND, 'Member profile not found', 404);
+  return sendSuccess(res, member);
+});
+
 // ─── GET SINGLE MEMBER ────────────────────────────────────────────────────────
 
 router.get('/:id', async (req, res) => {

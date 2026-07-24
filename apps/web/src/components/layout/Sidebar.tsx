@@ -10,7 +10,7 @@ import api from '@/lib/api'
 import toast from 'react-hot-toast'
 import { cn } from '@/lib/utils'
 
-const navItems = [
+const adminNav = [
   { to: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/members',     icon: Users,           label: 'Members' },
   { to: '/plans',       icon: CreditCard,      label: 'Membership Plans' },
@@ -21,6 +21,13 @@ const navItems = [
   { to: '/workouts',    icon: Dumbbell,        label: 'Workouts' },
   { to: '/analytics',   icon: BarChart3,       label: 'Analytics' },
   { to: '/settings',    icon: Settings,        label: 'Settings' },
+]
+
+const memberNav = [
+  { to: '/member/dashboard', icon: LayoutDashboard, label: 'My Dashboard' },
+  { to: '/member/plan',      icon: CreditCard,      label: 'My Plan' },
+  { to: '/member/workouts',  icon: Dumbbell,        label: 'My Workouts' },
+  { to: '/settings',         icon: Settings,        label: 'Settings' },
 ]
 
 export default function Sidebar() {
@@ -67,7 +74,7 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
-        {navItems.map(({ to, icon: Icon, label, soon }) => (
+        {(user?.role === 'member' ? memberNav : adminNav).map(({ to, icon: Icon, label, soon }) => (
           <NavLink
             key={to}
             to={soon ? '#' : to}

@@ -4,7 +4,9 @@ import { cn } from '@/lib/utils'
 import { triggerHaptic } from '@/lib/mobile'
 import { ImpactStyle } from '@capacitor/haptics'
 
-const mobileNav = [
+import { useAuthStore } from '@/store/authStore'
+
+const adminNav = [
   { to: '/dashboard',  icon: LayoutDashboard, label: 'Home' },
   { to: '/members',    icon: Users,           label: 'Members' },
   { to: '/attendance', icon: CalendarCheck,   label: 'Attendance' },
@@ -12,11 +14,20 @@ const mobileNav = [
   { to: '/workouts',   icon: Dumbbell,        label: 'Workouts' },
 ]
 
+const memberNav = [
+  { to: '/member/dashboard', icon: LayoutDashboard, label: 'Home' },
+  { to: '/member/plan',      icon: CreditCard,      label: 'My Plan' },
+  { to: '/member/workouts',  icon: Dumbbell,        label: 'Workouts' },
+]
+
 export default function MobileNav() {
+  const { user } = useAuthStore()
+  const navToUse = user?.role === 'member' ? memberNav : adminNav
+
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border z-50 safe-area-bottom">
       <div className="flex">
-        {mobileNav.map(({ to, icon: Icon, label }) => (
+        {navToUse.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
