@@ -1,7 +1,7 @@
 FROM node:20-slim
 
 # Install OpenSSL for Prisma
-RUN apt-get update -y && apt-get install -y openssl
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -22,10 +22,9 @@ RUN npx prisma generate
 
 # Build API and Web
 WORKDIR /app
-RUN npm run build
+RUN NODE_ENV=production npm run build
 
 # Start the application
 WORKDIR /app/apps/api
 EXPOSE 7860
-ENV NODE_ENV=production
-CMD npm start
+CMD ["node", "-e", "process.env.NODE_ENV='production'; process.env.PORT='7860'; require('./dist/server.js')"]
