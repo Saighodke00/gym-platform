@@ -42,6 +42,17 @@ export default function QrScannerPage() {
 
   const handleScan = async (code: string) => {
     if (!code.trim() || loading) return
+    
+    // Prevent scanning the Kiosk check-in URL by accident
+    if (code.includes('http') && code.includes('/checkin')) {
+      setResult({
+        status: 'error',
+        message: 'Invalid QR Code. Please scan a Member QR Code, not the Kiosk link.'
+      })
+      triggerHaptic(ImpactStyle.Medium)
+      return
+    }
+    
     setLoading(true)
     try {
       // Strip GDK: prefix if present
