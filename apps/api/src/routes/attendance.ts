@@ -311,7 +311,7 @@ router.get('/member/:memberId', async (req, res) => {
 
   // Calculate streak
   const dates = attendance.map(a => new Date(a.checked_in_at.toDateString()));
-  const uniqueDates = [...new Set(dates.map(d => d.toISOString()))].map(d => new Date(d)).sort((a, b) => b.getTime() - a.getTime());
+  const uniqueDates = [...new Set(dates.map(d => d.toISOString()))].map(d => new Date(d as string)).sort((a, b) => b.getTime() - a.getTime());
   
   let streak = 0;
   if (uniqueDates.length) {
