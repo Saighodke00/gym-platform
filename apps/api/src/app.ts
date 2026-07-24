@@ -3,6 +3,7 @@ import cors from 'cors';
 import compression from 'compression';
 import morgan from 'morgan';
 import path from 'path';
+import fs from 'fs';
 
 import { config } from './config';
 import { requestLogger, errorHandler } from './middleware/audit';
@@ -90,27 +91,22 @@ app.use(`${API}/templates`, templateRoutes);
 
 // ─── SERVE REACT FRONTEND ──────────────────────────────────────
 const webDistPath = path.join(__dirname, '../../web/dist');
-const fs = require('fs');
 
-if (!config.isDev || fs.existsSync(webDistPath)) {
-  app.use(express.static(webDistPath));
-  
-  app.get('*', (req, res) => {
-    if (!req.path.startsWith('/api')) {
-      res.sendFile(path.join(webDistPath, 'index.html'));
-    } else {
-      res.status(404).json({ success: false, error: 'Route not found' });
-    }
-  });
-} else {
-  // ─── 404 HANDLER FOR DEV ─────────────────────────────────────────────────────
-  app.use((_req, res) => {
-    res.status(404).json({
-      success: false,
-      error: { code: 'NOT_FOUND', message: 'Route not found' },
-    });
-  });
-}
+// Always serve the React frontend regardless of NODE_ENV
+app.use(express.static(webDistPath, { index: false }));
+
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ success: false, error: 'Route not found' });
+  }
+  const indexPath = path.join(webDistPath, 'index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    // Fallback: web not built yet (local dev without frontend)
+    res.status(200).json({ status: 'ok', message: 'GDK Gym API is running. Frontend not built.' });
+  }
+});
 
 // ─── GLOBAL ERROR HANDLER ─────────────────────────────────────────────────────
 app.use(errorHandler);
