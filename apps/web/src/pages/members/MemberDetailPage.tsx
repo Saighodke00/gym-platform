@@ -357,16 +357,25 @@ export default function MemberDetailPage() {
                 <label className="text-xs font-semibold text-slate-600">Discount (₹)</label>
                 <input type="number" className="input text-xs" value={discountApplied} onChange={(e) => setDiscountApplied(e.target.value)} />
               </div>
-              <button 
-                onClick={() => assignPlan.mutate({
-                  member_id: id, plan_id: selectedPlanId, start_date: startDate,
-                  amount_paid: parseFloat(amountPaid), discount_applied: parseFloat(discountApplied),
-                })}
-                disabled={!selectedPlanId || !amountPaid || assignPlan.isPending}
-                className="btn-primary w-full py-3 mt-2"
-              >
-                {assignPlan.isPending ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Confirm & Assign Plan'}
-              </button>
+              <div className="flex gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPlanModal(false)}
+                  className="btn-outline flex-1 py-3"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => assignPlan.mutate({
+                    member_id: id, plan_id: selectedPlanId, start_date: startDate,
+                    amount_paid: parseFloat(amountPaid), discount_applied: parseFloat(discountApplied),
+                  })}
+                  disabled={!selectedPlanId || !amountPaid || assignPlan.isPending}
+                  className="btn-primary flex-1 py-3"
+                >
+                  {assignPlan.isPending ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'Assign Plan'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -407,18 +416,27 @@ export default function MemberDetailPage() {
                 </select>
               </div>
 
-              <button 
-                onClick={() => recordPayment.mutate({
-                  member_id: id,
-                  member_plan_id: selectedPlanForPayment.id,
-                  amount: parseFloat(paymentAmount),
-                  method: paymentMethod
-                })}
-                disabled={!paymentAmount || parseFloat(paymentAmount) <= 0 || recordPayment.isPending}
-                className="btn-primary w-full py-3 mt-2 flex items-center justify-center gap-2"
-              >
-                {recordPayment.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <><CheckCircle2 className="w-4 h-4" /> Save Payment</>}
-              </button>
+              <div className="flex gap-2 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPaymentModal(false)}
+                  className="btn-outline flex-1 py-3"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={() => recordPayment.mutate({
+                    member_id: id,
+                    member_plan_id: selectedPlanForPayment.id,
+                    amount: parseFloat(paymentAmount),
+                    method: paymentMethod
+                  })}
+                  disabled={!paymentAmount || parseFloat(paymentAmount) <= 0 || recordPayment.isPending}
+                  className="btn-primary flex-1 py-3 flex items-center justify-center gap-2"
+                >
+                  {recordPayment.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <><CheckCircle2 className="w-4 h-4" /> Save Payment</>}
+                </button>
+              </div>
             </div>
           </div>
         </div>

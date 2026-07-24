@@ -209,7 +209,10 @@ export default function AddMemberPage() {
               </select>
             </div>
           </div>
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-between pt-2">
+            <button type="button" onClick={() => navigate('/members')} className="btn-outline text-slate-500">
+              Cancel
+            </button>
             <button type="submit" className="btn-primary">
               Next: Health Details <ChevronRight className="w-4 h-4" />
             </button>
