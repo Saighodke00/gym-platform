@@ -27,4 +27,5 @@ RUN npm run build
 # Start the application
 WORKDIR /app/apps/api
 EXPOSE 7860
+ENV NODE_ENV=production
 CMD npm start
