@@ -44,13 +44,15 @@ export default function MemberCheckin() {
         )
       }
     } catch (err: any) {
-      const errorStatus = err.response?.data?.data?.status
-      if (errorStatus === 'expired') {
+      const errorData = err.response?.data?.error
+      if (errorData?.code === 'NOT_FOUND') {
+        setStatus('error')
+      } else if (errorData?.status === 'expired') {
         setStatus('expired')
       } else {
         setStatus('error')
       }
-      setResult(err.response?.data?.data || { message: 'Something went wrong' })
+      setResult({ message: errorData?.message || 'Something went wrong' })
     }
   }
 
