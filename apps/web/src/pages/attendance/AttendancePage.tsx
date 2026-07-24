@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { CalendarCheck, Search, Clock, CheckCircle2, XCircle, Users, Activity, Monitor } from 'lucide-react'
+import { CalendarCheck, Search, Clock, CheckCircle2, XCircle, Users, Activity, Monitor, QrCode } from 'lucide-react'
 import { formatDateTime, formatTime, cn } from '@/lib/utils'
 import api from '@/lib/api'
 import toast from 'react-hot-toast'
@@ -86,8 +86,8 @@ export default function AttendancePage() {
           <Link to="/kiosk" className="btn-outline btn-sm gap-1.5">
             <Monitor className="w-4 h-4" /> Kiosk Mode
           </Link>
-          <Link to="/attendance/scan" className="btn-primary btn-sm">
-            <CalendarCheck className="w-4 h-4" /> Open QR Scanner
+          <Link to="/attendance/scan" className="btn-primary btn-sm gap-1.5">
+            <QrCode className="w-4 h-4" /> Scan QR
           </Link>
         </div>
       </div>
