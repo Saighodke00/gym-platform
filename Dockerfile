@@ -8,8 +8,9 @@ WORKDIR /app
 # Copy root package files
 COPY package*.json ./
 COPY apps/api/package*.json ./apps/api/
+COPY apps/web/package*.json ./apps/web/
 
-# Install dependencies
+# Install dependencies (handles workspaces)
 RUN npm install
 
 # Copy source
@@ -19,11 +20,11 @@ COPY . .
 WORKDIR /app/apps/api
 RUN npx prisma generate
 
-# Build the API
+# Build API and Web
+WORKDIR /app
 RUN npm run build
 
-# Expose the port Hugging Face expects
-EXPOSE 7860
-
 # Start the application
-CMD ["npm", "start"]
+WORKDIR /app/apps/api
+EXPOSE 7860
+CMD npm start

@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, shell } = require('electron');
 const path = require('path');
 const { spawn } = require('child_process');
-const address = require('address');
+
 const isDev = process.env.NODE_ENV === 'development';
 
 let mainWindow;
@@ -55,32 +55,14 @@ function startAPI() {
 }
 
 app.on('ready', () => {
-  // Only start the API process automatically if we are NOT in development
-  // In development, the root 'concurrently' script handles the API
-  if (!isDev) {
-    startAPI();
-  }
+  // In production, we connect to the Cloud API, so we don't start the local API anymore.
   
   createWindow();
 
   // Expose local IP to frontend
+  // No longer needed for cloud API
   ipcMain.on('get-local-ip', (event) => {
-    const ip = address.ip();
-    // Filter out localhost/loopback if possible
-    if (ip === '127.0.0.1') {
-      // Fallback to more aggressive search
-      const os = require('os');
-      const interfaces = os.networkInterfaces();
-      for (const name of Object.keys(interfaces)) {
-        for (const iface of interfaces[name]) {
-          if (iface.family === 'IPv4' && !iface.internal) {
-            event.reply('local-ip', iface.address);
-            return;
-          }
-        }
-      }
-    }
-    event.reply('local-ip', ip);
+    event.reply('local-ip', '127.0.0.1');
   });
 });
 

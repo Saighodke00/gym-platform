@@ -24,7 +24,9 @@ echo [1/2] Setting up Hugging Face connection...
 git remote remove hf >nul 2>&1
 git remote add hf https://Sai-ban111:%HF_TOKEN%@huggingface.co/spaces/Sai-ban111/gym_app
 
-echo [2/2] Pushing code to Hugging Face (this may take a minute)...
+echo [2/2] Preparing and pushing code to Hugging Face (this may take a minute)...
+git add .
+git commit -m "Auto-deploy to Hugging Face" >nul 2>&1
 git push hf main --force
 
 echo.

@@ -1,25 +1,16 @@
 @echo off
-SETLOCAL EnableDelayedExpansion
-TITLE GDK Gym - Master Launcher
+TITLE GDK Gym - Cloud System
+
 echo ──────────────────────────────────────────────────────────
-echo           GDK GYM MANAGEMENT SYSTEM
-echo ──────────────────────────────────────────────────────────
-echo.
-
-:: Step 1: Cleanup old processes to prevent "Address in use" errors
-echo [1/3] Cleaning up old sessions...
-taskkill /F /IM node.exe /T >nul 2>&1
-taskkill /F /IM electron.exe /T >nul 2>&1
-
-:: Step 2: Start the Tunnel in a new window
-echo [2/3] Launching Internet Tunnel (Ngrok)...
-start "GDK Gym Tunnel" cmd /c "run_ngrok.bat"
-
-:: Step 3: Start the Gym App
-echo [3/3] Launching Dashboard and Services...
-echo.
-echo ⚠️  KEEP THIS WINDOW OPEN to keep the gym running.
+echo           GDK GYM MANAGEMENT PLATFORM (CLOUD)
 echo ──────────────────────────────────────────────────────────
 echo.
-call npm run dev:desktop
-pause
+echo Loading your 24/7 cloud server...
+echo.
+
+:: Open the cloud app in the default web browser
+start https://sai-ban111-gym-app.hf.space/
+
+echo ✅ Gym System launched successfully in your browser!
+echo ──────────────────────────────────────────────────────────
+timeout /t 5 >nul

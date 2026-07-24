@@ -9,28 +9,19 @@ const getBaseURL = () => {
     return override
   }
 
-  // If we are running on a mobile device (Capacitor)
   const isNative = window.location.protocol === 'capacitor:'
-  const isMobileView = window.innerWidth < 768
-
-  // Production Cloud URL
+  const isElectron = window.location.protocol === 'file:'
+  
+  // Production Cloud URL for true mobile apps and PC apps
   const PROD_API_URL = 'https://sai-ban111-gym-app.hf.space/api/v1'
 
-  if (isNative || (window.location.hostname === 'localhost' && isMobileView)) {
-    // Check if we are in an Android Emulator
-    const ua = navigator.userAgent.toLowerCase()
-    const isEmulator = ua.includes('android') && (ua.includes('google') || ua.includes('sdk') || ua.includes('emulator'))
-    
-    if (isEmulator) {
-      return 'http://10.0.2.2:4000/api/v1'
-    }
-    
-    // Default to Cloud URL for mobile devices so it works everywhere
-    console.log(`📱 Native Platform Detected. Connecting to Cloud API: ${PROD_API_URL}`)
+  if (isNative || isElectron) {
     return PROD_API_URL
   }
 
-  return window.location.hostname === 'localhost' ? '/api/v1' : PROD_API_URL
+  // For ANY browser environment (localhost, 192.168.X.X, ngrok, cloudflare tunnels, etc.)
+  // We use relative path so Vite proxy handles it.
+  return '/api/v1'
 }
 
 

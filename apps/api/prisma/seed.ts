@@ -66,12 +66,36 @@ async function main() {
       features: ['Gym Access', 'Locker Room', 'Free WiFi'],
     },
     {
+      name: 'Student Monthly',
+      description: 'Discounted plan for students with valid ID',
+      duration_days: 30,
+      price: 999,
+      gst_rate: 18,
+      features: ['Gym Access', 'Locker Room'],
+    },
+    {
+      name: '1 Month Personal Training',
+      description: 'Dedicated 1-on-1 personal trainer with custom diet plan & daily tracking',
+      duration_days: 30,
+      price: 5000,
+      gst_rate: 18,
+      features: ['Personal Trainer (5 days/week)', 'Custom Macro Diet Plan', 'Body Composition Analysis', 'Locker Room'],
+    },
+    {
       name: 'Quarterly Pro',
       description: 'Gym + 1 trainer session/week',
       duration_days: 90,
       price: 4000,
       gst_rate: 18,
       features: ['Gym Access', 'Trainer Sessions (4/month)', 'Diet Consultation', 'Locker Room'],
+    },
+    {
+      name: 'Couples / Buddy Quarterly',
+      description: 'Special 3-month package for two fitness partners',
+      duration_days: 90,
+      price: 7000,
+      gst_rate: 18,
+      features: ['Access for 2 Members', 'Free Locker Access', 'Steam & Sauna (2x/month)', 'Diet Consultation'],
     },
     {
       name: 'Half-Yearly Elite',
@@ -90,28 +114,28 @@ async function main() {
       features: ['Unlimited Gym Access', 'Personal Trainer', 'Diet Plan', 'Body Analysis Monthly', 'Guest Passes (5)', 'Priority Booking'],
     },
     {
-      name: 'Student Monthly',
-      description: 'Discounted plan for students with valid ID',
-      duration_days: 30,
-      price: 999,
+      name: 'VIP All-Access Pass',
+      description: 'Unlimited 365-day access to all equipment, classes, personal trainer & supplements perk',
+      duration_days: 365,
+      price: 18000,
       gst_rate: 18,
-      features: ['Gym Access', 'Locker Room'],
+      features: ['VIP Locker & Towel Service', 'Unlimited Personal Training', 'Custom Nutrition Plan', 'Group Classes Included', 'Free Protein Shakes (10/mo)'],
     },
   ];
 
   for (const planData of plans) {
     await prisma.membershipPlan.upsert({
-      where: { id: `seed-plan-${planData.name.toLowerCase().replace(/\s/g, '-')}` },
+      where: { id: `seed-plan-${planData.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}` },
       update: {},
       create: {
-        id: `seed-plan-${planData.name.toLowerCase().replace(/\s/g, '-')}`,
+        id: `seed-plan-${planData.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`,
         gym_id: gym.id,
         ...planData,
         features: JSON.stringify(planData.features),
       },
     });
   }
-  console.log('✅ 5 Membership plans created');
+  console.log('✅ 8 Membership plans created');
 
   // ─── EXERCISE LIBRARY ──────────────────────────────────────────────────────
   const exercises = [
